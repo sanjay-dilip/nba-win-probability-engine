@@ -69,6 +69,7 @@ SAMPLE_PREDICTIONS_PATH = SAMPLE_DATA_DIR / "sample_predictions.csv"
 # Deploy-safe dashboard demo files (small committed samples for hosted apps).
 DEPLOY_PREGAME_DEMO_PREDICTIONS_PATH = DEPLOY_DATA_DIR / "pregame_demo_predictions.csv"
 DEPLOY_LIVE_DEMO_PREDICTIONS_PATH = DEPLOY_DATA_DIR / "live_demo_predictions.csv"
+FINALS_LIVE_PREDICTIONS_DEPLOY_PATH = DEPLOY_DATA_DIR / "finals_live_predictions.csv"
 
 # ---------------------------------------------------------------------------
 # Raw data file paths (collected straight from the NBA API)

@@ -579,6 +579,30 @@ def format_status_panel_text(
 
 DEPLOY_PREGAME_DEMO_NOTE = "Deployment demo: using a small committed prediction sample."
 DEPLOY_LIVE_DEMO_NOTE = "Deployment demo: using one committed game replay sample."
+DEPLOY_FINALS_REPLAY_NOTE = "Deployment demo: using the committed 2025-26 Finals replay export."
+
+
+def _finals_live_deploy_path() -> Path:
+    """Return deploy-safe Finals live predictions path with a defensive fallback."""
+    from src import config as project_config
+
+    return getattr(
+        project_config,
+        "FINALS_LIVE_PREDICTIONS_DEPLOY_PATH",
+        project_config.ROOT_DIR / "data" / "deploy" / "finals_live_predictions.csv",
+    )
+
+
+def resolve_playoff_live_predictions_source() -> Tuple[Path, bool]:
+    """Return playoff live predictions path and whether it is the deploy Finals export."""
+    from src import config as project_config
+
+    if project_config.PLAYOFF_LIVE_PREDICTIONS_PATH.exists():
+        return project_config.PLAYOFF_LIVE_PREDICTIONS_PATH, False
+    deploy_path = _finals_live_deploy_path()
+    if deploy_path.exists():
+        return deploy_path, True
+    return project_config.PLAYOFF_LIVE_PREDICTIONS_PATH, False
 
 
 def resolve_pregame_predictions_source() -> Tuple[Path, bool]:

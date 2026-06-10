@@ -7,6 +7,11 @@ from __future__ import annotations
 
 import sys
 from pathlib import Path
+import sys
+
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
 
 import pandas as pd
 import pytest
@@ -123,6 +128,20 @@ def test_resolve_pregame_predictions_prefers_processed(tmp_path, monkeypatch):
     path, is_demo = resolve_pregame_predictions_source()
     assert path == processed
     assert is_demo is False
+
+
+def test_resolve_playoff_live_predictions_falls_back_to_finals_deploy(tmp_path, monkeypatch):
+    from src import config
+    from dashboard_utils import resolve_playoff_live_predictions_source
+
+    deploy = tmp_path / "finals_deploy.csv"
+    deploy.write_text("game_id\n0042500401\n", encoding="utf-8")
+    monkeypatch.setattr(config, "PLAYOFF_LIVE_PREDICTIONS_PATH", tmp_path / "missing.csv")
+    monkeypatch.setattr(config, "FINALS_LIVE_PREDICTIONS_DEPLOY_PATH", deploy)
+
+    path, is_deploy = resolve_playoff_live_predictions_source()
+    assert path == deploy
+    assert is_deploy is True
 
 
 def test_resolve_pregame_predictions_falls_back_to_deploy(tmp_path, monkeypatch):
