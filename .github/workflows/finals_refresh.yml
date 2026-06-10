@@ -12,13 +12,9 @@ name: Finals data refresh
 on:
   workflow_dispatch:
   schedule:
-    # Overnight refresh after Finals games
-    - cron: "45 4 * * 4"
-    - cron: "30 6 * * 6"
-
-    # Morning/midday backup refresh
-    - cron: "0 14 * * 4"
-    - cron: "0 14 * * 6"
+    - cron: "45 4 * * *"
+    - cron: "30 6 * * *"
+    - cron: "0 14 * * *"
 
 permissions:
   contents: write
