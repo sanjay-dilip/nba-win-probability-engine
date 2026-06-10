@@ -580,6 +580,23 @@ def format_status_panel_text(
 DEPLOY_PREGAME_DEMO_NOTE = "Deployment demo: using a small committed prediction sample."
 DEPLOY_LIVE_DEMO_NOTE = "Deployment demo: using one committed game replay sample."
 DEPLOY_FINALS_REPLAY_NOTE = "Deployment demo: using the committed 2025-26 Finals replay export."
+DEPLOY_FINALS_VIEW_NOTE = (
+    "Deployment view: this page uses lightweight Finals reports and replay exports. "
+    "Full playoff metadata and play-by-play are available when the local pipeline is run."
+)
+FULL_PLAYOFF_DATASET_CAPTION = "Large playoff files are not committed to GitHub."
+
+
+def deploy_file_ready(path: Union[str, Path]) -> bool:
+    """Return True when a deploy-safe CSV exists and has at least one row."""
+    csv_path = Path(path)
+    if not csv_path.exists():
+        return False
+    try:
+        df = pd.read_csv(csv_path, dtype={"game_id": str})
+    except pd.errors.EmptyDataError:
+        return False
+    return not df.empty
 
 
 def _finals_live_deploy_path() -> Path:
@@ -591,6 +608,27 @@ def _finals_live_deploy_path() -> Path:
         "FINALS_LIVE_PREDICTIONS_DEPLOY_PATH",
         project_config.ROOT_DIR / "data" / "deploy" / "finals_live_predictions.csv",
     )
+
+
+def is_finals_case_study_deployment_view(
+    playoff_games_path: Optional[Union[str, Path]] = None,
+    playoff_pbp_path: Optional[Union[str, Path]] = None,
+    case_study_summary_path: Optional[Union[str, Path]] = None,
+    finals_deploy_path: Optional[Union[str, Path]] = None,
+) -> bool:
+    """True when deploy-safe Finals files should drive the case-study page presentation."""
+    from src import config as project_config
+
+    playoff_games_path = Path(playoff_games_path or project_config.PLAYOFF_GAMES_PATH)
+    playoff_pbp_path = Path(playoff_pbp_path or project_config.PLAYOFF_PLAY_BY_PLAY_PATH)
+    case_study_summary_path = Path(
+        case_study_summary_path or project_config.NBA_FINALS_CASE_STUDY_SUMMARY_PATH
+    )
+    finals_deploy_path = Path(finals_deploy_path or _finals_live_deploy_path())
+
+    full_playoff_ready = deploy_file_ready(playoff_games_path) or deploy_file_ready(playoff_pbp_path)
+    deploy_ready = deploy_file_ready(case_study_summary_path) or deploy_file_ready(finals_deploy_path)
+    return not full_playoff_ready and deploy_ready
 
 
 def resolve_playoff_live_predictions_source() -> Tuple[Path, bool]:

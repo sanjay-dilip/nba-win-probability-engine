@@ -130,6 +130,37 @@ def test_resolve_pregame_predictions_prefers_processed(tmp_path, monkeypatch):
     assert is_demo is False
 
 
+def test_finals_case_study_deployment_view_when_deploy_files_only(tmp_path, monkeypatch):
+    from src import config
+    from dashboard_utils import is_finals_case_study_deployment_view
+
+    summary = tmp_path / "summary.csv"
+    deploy = tmp_path / "deploy.csv"
+    summary.write_text("game_id,season\n0042500401,2025-26\n", encoding="utf-8")
+    deploy.write_text("game_id\n0042500401\n", encoding="utf-8")
+
+    assert is_finals_case_study_deployment_view(
+        playoff_games_path=tmp_path / "missing_games.csv",
+        playoff_pbp_path=tmp_path / "missing_pbp.csv",
+        case_study_summary_path=summary,
+        finals_deploy_path=deploy,
+    )
+
+
+def test_finals_case_study_deployment_view_false_when_full_playoff_exists(tmp_path, monkeypatch):
+    from dashboard_utils import is_finals_case_study_deployment_view
+
+    games = tmp_path / "games.csv"
+    games.write_text("game_id\n0042500401\n", encoding="utf-8")
+
+    assert not is_finals_case_study_deployment_view(
+        playoff_games_path=games,
+        playoff_pbp_path=tmp_path / "missing_pbp.csv",
+        case_study_summary_path=tmp_path / "summary.csv",
+        finals_deploy_path=tmp_path / "deploy.csv",
+    )
+
+
 def test_resolve_playoff_live_predictions_falls_back_to_finals_deploy(tmp_path, monkeypatch):
     from src import config
     from dashboard_utils import resolve_playoff_live_predictions_source

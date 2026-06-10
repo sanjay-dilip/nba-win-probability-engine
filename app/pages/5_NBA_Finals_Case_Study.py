@@ -24,9 +24,12 @@ from dashboard_utils import (  # noqa: E402
     add_replay_columns,
     format_game_clock,
     format_pct,
-    DEPLOY_FINALS_REPLAY_NOTE,
+    DEPLOY_FINALS_VIEW_NOTE,
+    FULL_PLAYOFF_DATASET_CAPTION,
+    deploy_file_ready,
     format_score,
     format_status_text,
+    is_finals_case_study_deployment_view,
     page_intro_subtitle,
     resolve_playoff_live_predictions_source,
 )
@@ -107,17 +110,41 @@ predictions_path, using_finals_deploy = resolve_playoff_live_predictions_source(
 predictions_df = load_optional_csv(str(predictions_path))
 case_study_df = load_optional_csv(str(config.NBA_FINALS_CASE_STUDY_SUMMARY_PATH))
 
-if using_finals_deploy and predictions_df is not None and not predictions_df.empty:
-    st.caption(DEPLOY_FINALS_REPLAY_NOTE)
+deployment_view = is_finals_case_study_deployment_view()
 
 st.markdown("### Coverage & status")
-status_col1, status_col2, status_col3 = st.columns(3)
-with status_col1:
-    st.metric("Playoff metadata", format_status_text(asset_status(config.PLAYOFF_GAMES_PATH)))
-with status_col2:
-    st.metric("Playoff play-by-play", format_status_text(asset_status(config.PLAYOFF_PLAY_BY_PLAY_PATH)))
-with status_col3:
-    st.metric("Playoff predictions", format_status_text(asset_status(predictions_path)))
+if deployment_view:
+    st.caption(DEPLOY_FINALS_VIEW_NOTE)
+    status_col1, status_col2, status_col3 = st.columns(3)
+    with status_col1:
+        summary_ok = deploy_file_ready(config.NBA_FINALS_CASE_STUDY_SUMMARY_PATH)
+        st.metric(
+            "Deploy-safe Finals summary",
+            "Available" if summary_ok else "Not available",
+        )
+    with status_col2:
+        replay_ok = deploy_file_ready(
+            getattr(
+                config,
+                "FINALS_LIVE_PREDICTIONS_DEPLOY_PATH",
+                config.ROOT_DIR / "data" / "deploy" / "finals_live_predictions.csv",
+            )
+        )
+        st.metric(
+            "Deploy-safe Finals replay",
+            "Available" if replay_ok else "Not available",
+        )
+    with status_col3:
+        st.metric("Full playoff dataset", "Local only")
+        st.caption(FULL_PLAYOFF_DATASET_CAPTION)
+else:
+    status_col1, status_col2, status_col3 = st.columns(3)
+    with status_col1:
+        st.metric("Playoff metadata", format_status_text(asset_status(config.PLAYOFF_GAMES_PATH)))
+    with status_col2:
+        st.metric("Playoff play-by-play", format_status_text(asset_status(config.PLAYOFF_PLAY_BY_PLAY_PATH)))
+    with status_col3:
+        st.metric("Playoff predictions", format_status_text(asset_status(predictions_path)))
 
 if case_study_df is None or case_study_df.empty:
     focus_games = pd.DataFrame()
