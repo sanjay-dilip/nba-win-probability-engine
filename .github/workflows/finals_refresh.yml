@@ -32,15 +32,23 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Collect playoff metadata and play-by-play (2025-26)
-        run: |
-          python run_pipeline.py --mode collect_playoff_games --seasons 2025-26
-          python run_pipeline.py --mode collect_playoff_play_by_play --seasons 2025-26
+      - name: Collect 2025-26 playoff metadata
         continue-on-error: true
-
-      - name: Run local playoff case-study pipeline (no training)
         run: |
-          python run_pipeline.py --mode run_playoff_case_study_pipeline --seasons 2022-23 2023-24 2024-25 2025-26
+          python run_pipeline.py --mode collect_playoff_games --seasons 2025-26 || \
+          python run_pipeline.py --mode collect_playoff_games --seasons 2025-26 || \
+          python run_pipeline.py --mode collect_playoff_games --seasons 2025-26
+
+      - name: Collect 2025-26 playoff play-by-play
+        continue-on-error: true
+        run: |
+          python run_pipeline.py --mode collect_playoff_play_by_play --seasons 2025-26 || \
+          python run_pipeline.py --mode collect_playoff_play_by_play --seasons 2025-26 || \
+          python run_pipeline.py --mode collect_playoff_play_by_play --seasons 2025-26
+
+      - name: Run playoff case-study pipeline
+        run: |
+          python run_pipeline.py --mode run_playoff_case_study_pipeline --seasons 2025-26
 
       - name: Commit deploy-safe Finals reports if changed
         run: |
