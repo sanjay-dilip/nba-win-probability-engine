@@ -37,18 +37,22 @@ jobs:
         run: |
           python run_pipeline.py --mode collect_playoff_games --seasons 2025-26 || \
           python run_pipeline.py --mode collect_playoff_games --seasons 2025-26 || \
-          python run_pipeline.py --mode collect_playoff_games --seasons 2025-26
+          python run_pipeline.py --mode collect_playoff_games --seasons 2025-26 || \
+          echo "Playoff metadata collection failed after retries. Continuing with existing deploy-safe files."
 
       - name: Collect 2025-26 playoff play-by-play
         continue-on-error: true
         run: |
           python run_pipeline.py --mode collect_playoff_play_by_play --seasons 2025-26 || \
           python run_pipeline.py --mode collect_playoff_play_by_play --seasons 2025-26 || \
-          python run_pipeline.py --mode collect_playoff_play_by_play --seasons 2025-26
+          python run_pipeline.py --mode collect_playoff_play_by_play --seasons 2025-26 || \
+          echo "Playoff play-by-play collection failed after retries. Continuing with existing deploy-safe files."
 
       - name: Run playoff case-study pipeline
+        continue-on-error: true
         run: |
-          python run_pipeline.py --mode run_playoff_case_study_pipeline --seasons 2025-26
+          python run_pipeline.py --mode run_playoff_case_study_pipeline --seasons 2025-26 || \
+          echo "Case-study pipeline could not run. Keeping existing deploy-safe reports."
 
       - name: Commit deploy-safe Finals reports if changed
         run: |
