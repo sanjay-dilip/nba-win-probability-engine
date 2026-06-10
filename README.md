@@ -4,7 +4,7 @@ A machine learning dashboard that predicts NBA game win probability before tip-o
 
 ## Live Demo
 
-[Open the Streamlit App](YOUR_STREAMLIT_LINK_HERE)
+[NBA Win Probability Engine](https://nba-win-probability-engine.streamlit.app/)
 
 ## Overview
 
