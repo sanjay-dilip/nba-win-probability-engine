@@ -38,7 +38,8 @@ jobs:
           python run_pipeline.py --mode collect_playoff_games --seasons 2025-26 || \
           python run_pipeline.py --mode collect_playoff_games --seasons 2025-26 || \
           python run_pipeline.py --mode collect_playoff_games --seasons 2025-26 || \
-          echo "Playoff metadata collection failed after retries. Continuing with existing deploy-safe files."
+            echo "Playoff metadata collection failed after retries. Continuing with existing deploy-safe files."
+            exit 0
 
       - name: Collect 2025-26 playoff play-by-play
         continue-on-error: true
@@ -56,7 +57,7 @@ jobs:
           }
 
       - name: Commit deploy-safe Finals reports if changed
-      if: always()
+        if: always()
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
