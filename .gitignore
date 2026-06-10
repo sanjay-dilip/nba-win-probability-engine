@@ -40,8 +40,14 @@ outputs/reports/*
 !outputs/reports/model_performance_public_summary.csv
 !outputs/reports/evaluation_public_summary.csv
 
-# Trained model binaries
+# Keep full model artifacts ignored by default
 models/*.pkl
+
+# Required lightweight model artifacts for GitHub Actions refresh
+!models/live_model_multiseason.pkl
+!models/live_feature_columns_multiseason.pkl
+!models/pregame_model_multiseason.pkl
+!models/pregame_feature_columns_multiseason.pkl
 
 # Internal handoff file (exclude before public repo cleanup)
 CONTEXT.md
