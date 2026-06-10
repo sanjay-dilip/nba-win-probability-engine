@@ -574,6 +574,56 @@ def format_status_panel_text(
 
 
 # ---------------------------------------------------------------------------
+# Deploy-safe dashboard fallbacks
+# ---------------------------------------------------------------------------
+
+DEPLOY_PREGAME_DEMO_NOTE = "Deployment demo: using a small committed prediction sample."
+DEPLOY_LIVE_DEMO_NOTE = "Deployment demo: using one committed game replay sample."
+
+
+def resolve_pregame_predictions_source() -> Tuple[Path, bool]:
+    """Return pre-game predictions path and whether it is the deploy demo file."""
+    from src import config as project_config
+
+    if project_config.PREGAME_PREDICTIONS_PATH.exists():
+        return project_config.PREGAME_PREDICTIONS_PATH, False
+    if project_config.DEPLOY_PREGAME_DEMO_PREDICTIONS_PATH.exists():
+        return project_config.DEPLOY_PREGAME_DEMO_PREDICTIONS_PATH, True
+    return project_config.PREGAME_PREDICTIONS_PATH, False
+
+
+def resolve_live_predictions_source() -> Tuple[Path, bool]:
+    """Return live predictions path and whether it is the deploy demo file."""
+    from src import config as project_config
+
+    if project_config.LIVE_PREDICTIONS_PATH.exists():
+        return project_config.LIVE_PREDICTIONS_PATH, False
+    if project_config.DEPLOY_LIVE_DEMO_PREDICTIONS_PATH.exists():
+        return project_config.DEPLOY_LIVE_DEMO_PREDICTIONS_PATH, True
+    return project_config.LIVE_PREDICTIONS_PATH, False
+
+
+def format_public_performance_summary(df: pd.DataFrame) -> pd.DataFrame:
+    """Return a display-friendly public model performance summary table."""
+    if df is None or df.empty:
+        return pd.DataFrame()
+    columns = {
+        "model": "Model",
+        "evaluation_setup": "Evaluation setup",
+        "accuracy": "Accuracy",
+        "roc_auc": "ROC-AUC",
+        "log_loss": "Log loss",
+        "brier_score": "Brier score",
+        "notes": "Notes",
+    }
+    work = df.copy()
+    for col in ["accuracy", "roc_auc", "log_loss", "brier_score"]:
+        if col in work.columns:
+            work[col] = work[col].map(lambda v: format_metric_value(v, metric_name=col))
+    return work[list(columns.keys())].rename(columns=columns)
+
+
+# ---------------------------------------------------------------------------
 # 2025-26 NBA Finals showcase helpers (Build 20.8)
 # ---------------------------------------------------------------------------
 

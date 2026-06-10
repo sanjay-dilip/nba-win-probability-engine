@@ -29,6 +29,7 @@ from dashboard_utils import (  # noqa: E402
     format_large_number,
     format_metric_value,
     format_pct,
+    format_public_performance_summary,
     format_status_panel_text,
     load_freshness_summary,
     metric_display_name,
@@ -196,33 +197,68 @@ st.subheader(f"{PRIMARY_MODEL_LABEL} performance")
 st.caption(PRIMARY_MODEL_DESCRIPTION)
 st.caption(f"Train: {PRIMARY_MODEL_TRAIN_SEASONS} · Test: {PRIMARY_MODEL_TEST_SEASON}")
 
-primary_col1, primary_col2 = st.columns(2)
+public_summary_df: Optional[pd.DataFrame] = None
+if _report_exists(config.MODEL_PERFORMANCE_PUBLIC_SUMMARY_PATH):
+    public_summary_df = load_report_csv(str(config.MODEL_PERFORMANCE_PUBLIC_SUMMARY_PATH))
 
-with primary_col1:
-    st.markdown("**Pre-game model**")
-    if _report_exists(config.PREGAME_MODEL_METRICS_MULTISEASON_PATH):
-        pregame_primary = load_report_csv(str(config.PREGAME_MODEL_METRICS_MULTISEASON_PATH))
-        st.table(
-            _metrics_table(
-                pregame_primary,
-                ["accuracy", "roc_auc", "log_loss", "brier_score", "n_train", "n_test", "n_features"],
-            )
-        )
-    else:
-        st.info("Primary pre-game metrics not available.")
+has_full_pregame = _report_exists(config.PREGAME_MODEL_METRICS_MULTISEASON_PATH)
+has_full_live = _report_exists(config.LIVE_MODEL_METRICS_MULTISEASON_PATH)
+has_public_summary = public_summary_df is not None and not public_summary_df.empty
 
-with primary_col2:
-    st.markdown("**Live model**")
-    if _report_exists(config.LIVE_MODEL_METRICS_MULTISEASON_PATH):
-        live_primary = load_report_csv(str(config.LIVE_MODEL_METRICS_MULTISEASON_PATH))
-        st.table(
-            _metrics_table(
-                live_primary,
-                ["accuracy", "roc_auc", "log_loss", "brier_score", "train_games", "test_games", "n_features"],
+if not has_full_pregame and not has_full_live and has_public_summary:
+    st.dataframe(
+        format_public_performance_summary(public_summary_df),
+        use_container_width=True,
+        hide_index=True,
+    )
+else:
+    primary_col1, primary_col2 = st.columns(2)
+
+    with primary_col1:
+        st.markdown("**Pre-game model**")
+        if has_full_pregame:
+            pregame_primary = load_report_csv(str(config.PREGAME_MODEL_METRICS_MULTISEASON_PATH))
+            st.table(
+                _metrics_table(
+                    pregame_primary,
+                    ["accuracy", "roc_auc", "log_loss", "brier_score", "n_train", "n_test", "n_features"],
+                )
             )
-        )
-    else:
-        st.info("Primary live metrics not available.")
+        elif has_public_summary:
+            pregame_public = public_summary_df.loc[
+                public_summary_df["model"].astype(str).str.contains("Pre-game", case=False, na=False)
+            ]
+            if not pregame_public.empty:
+                st.dataframe(
+                    format_public_performance_summary(pregame_public),
+                    use_container_width=True,
+                    hide_index=True,
+                )
+        else:
+            st.info("Primary pre-game metrics not available.")
+
+    with primary_col2:
+        st.markdown("**Live model**")
+        if has_full_live:
+            live_primary = load_report_csv(str(config.LIVE_MODEL_METRICS_MULTISEASON_PATH))
+            st.table(
+                _metrics_table(
+                    live_primary,
+                    ["accuracy", "roc_auc", "log_loss", "brier_score", "train_games", "test_games", "n_features"],
+                )
+            )
+        elif has_public_summary:
+            live_public = public_summary_df.loc[
+                public_summary_df["model"].astype(str).str.contains("Live", case=False, na=False)
+            ]
+            if not live_public.empty:
+                st.dataframe(
+                    format_public_performance_summary(live_public),
+                    use_container_width=True,
+                    hide_index=True,
+                )
+        else:
+            st.info("Primary live metrics not available.")
 
 st.info(
     "The multi-season model is the primary evaluation target. "

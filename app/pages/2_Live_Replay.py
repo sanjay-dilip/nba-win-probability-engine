@@ -20,6 +20,7 @@ if str(APP_DIR) not in sys.path:
 from dashboard_utils import (  # noqa: E402
     BASELINE_MODEL_LABEL,
     DEMO_PREDICTION_NOTE,
+    DEPLOY_LIVE_DEMO_NOTE,
     EVENT_TABLE_COLUMNS,
     REQUIRED_LIVE_PREDICTION_COLUMNS,
     add_replay_columns,
@@ -34,6 +35,7 @@ from dashboard_utils import (  # noqa: E402
     lookup_game_result,
     missing_required_columns,
     page_intro_subtitle,
+    resolve_live_predictions_source,
     top_momentum_swings,
 )
 from src import config  # noqa: E402
@@ -131,7 +133,7 @@ def build_win_probability_chart(
     return fig
 
 
-predictions_path = config.LIVE_PREDICTIONS_PATH
+predictions_path, using_deploy_demo = resolve_live_predictions_source()
 
 if not predictions_path.exists():
     st.warning(
@@ -140,6 +142,9 @@ if not predictions_path.exists():
         "`python run_pipeline.py --mode predict_live`"
     )
     st.stop()
+
+if using_deploy_demo:
+    st.caption(DEPLOY_LIVE_DEMO_NOTE)
 
 predictions = load_live_predictions(str(predictions_path))
 

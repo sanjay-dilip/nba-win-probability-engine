@@ -48,6 +48,7 @@ SAMPLE_DATA_DIR = DATA_DIR / "sample"
 RAW_DATA_DIR = DATA_DIR / "raw"
 PROCESSED_DATA_DIR = DATA_DIR / "processed"
 MANUAL_DATA_DIR = DATA_DIR / "manual"
+DEPLOY_DATA_DIR = DATA_DIR / "deploy"
 LOGS_DIR = DATA_DIR / "logs"
 
 # ---------------------------------------------------------------------------
@@ -64,6 +65,10 @@ SAMPLE_GAMES_PATH = SAMPLE_DATA_DIR / "sample_games.csv"
 SAMPLE_PREGAME_FEATURES_PATH = SAMPLE_DATA_DIR / "sample_pregame_features.csv"
 SAMPLE_LIVE_FEATURES_PATH = SAMPLE_DATA_DIR / "sample_live_features.csv"
 SAMPLE_PREDICTIONS_PATH = SAMPLE_DATA_DIR / "sample_predictions.csv"
+
+# Deploy-safe dashboard demo files (small committed samples for hosted apps).
+DEPLOY_PREGAME_DEMO_PREDICTIONS_PATH = DEPLOY_DATA_DIR / "pregame_demo_predictions.csv"
+DEPLOY_LIVE_DEMO_PREDICTIONS_PATH = DEPLOY_DATA_DIR / "live_demo_predictions.csv"
 
 # ---------------------------------------------------------------------------
 # Raw data file paths (collected straight from the NBA API)
@@ -169,6 +174,7 @@ PROJECT_QA_REPORT_PATH = REPORTS_DIR / "project_qa_summary.csv"
 
 # Model version comparison (Build 19). Written by src/compare_model_versions.py.
 MODEL_COMPARISON_SUMMARY_PATH = REPORTS_DIR / "model_comparison_summary.csv"
+MODEL_PERFORMANCE_PUBLIC_SUMMARY_PATH = REPORTS_DIR / "model_performance_public_summary.csv"
 MODEL_COMPARISON_DETAIL_PATH = REPORTS_DIR / "model_comparison_detail.csv"
 PHASE_COMPARISON_SUMMARY_PATH = REPORTS_DIR / "live_phase_comparison_summary.csv"
 CALIBRATION_COMPARISON_SUMMARY_PATH = REPORTS_DIR / "calibration_comparison_summary.csv"
@@ -215,6 +221,7 @@ ALL_DIRECTORIES = [
     RAW_DATA_DIR,
     PROCESSED_DATA_DIR,
     MANUAL_DATA_DIR,
+    DEPLOY_DATA_DIR,
     LOGS_DIR,
     MODELS_DIR,
     MODELS_DIR / "sample",
