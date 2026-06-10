@@ -186,11 +186,17 @@ def _calibration_bar_chart(calibration_df: pd.DataFrame, title: str) -> go.Figur
 
 
 evaluation_ready = _report_exists(config.EVALUATION_SUMMARY_PATH)
-evaluation_public_ready = _report_exists(config.EVALUATION_PUBLIC_SUMMARY_PATH)
+evaluation_public_summary_path = getattr(
+    config,
+    "EVALUATION_PUBLIC_SUMMARY_PATH",
+    config.REPORTS_DIR / "evaluation_public_summary.csv",
+)
+
+evaluation_public_ready = _report_exists(evaluation_public_summary_path)
 
 if not evaluation_ready:
     if evaluation_public_ready:
-        evaluation_public_df = load_report_csv(str(config.EVALUATION_PUBLIC_SUMMARY_PATH))
+        evaluation_public_df = load_report_csv(str(evaluation_public_summary_path))
         st.subheader("Evaluation overview")
         st.caption(
             "Deployment summary: full local evaluation reports are not committed, "
