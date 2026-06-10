@@ -24,9 +24,11 @@ from dashboard_utils import (  # noqa: E402
     add_replay_columns,
     format_game_clock,
     format_pct,
+    DEPLOY_FINALS_REPLAY_NOTE,
     format_score,
     format_status_text,
     page_intro_subtitle,
+    resolve_playoff_live_predictions_source,
 )
 from src import config  # noqa: E402
 from src.playoff_case_study import CASE_STUDY_FOCUS_SEASON  # noqa: E402
@@ -101,8 +103,12 @@ def build_probability_chart(game_df: pd.DataFrame, home_team: str) -> go.Figure:
 
 games_df = load_optional_csv(str(config.PLAYOFF_GAMES_PATH))
 pbp_df = load_optional_csv(str(config.PLAYOFF_PLAY_BY_PLAY_PATH))
-predictions_df = load_optional_csv(str(config.PLAYOFF_LIVE_PREDICTIONS_PATH))
+predictions_path, using_finals_deploy = resolve_playoff_live_predictions_source()
+predictions_df = load_optional_csv(str(predictions_path))
 case_study_df = load_optional_csv(str(config.NBA_FINALS_CASE_STUDY_SUMMARY_PATH))
+
+if using_finals_deploy and predictions_df is not None and not predictions_df.empty:
+    st.caption(DEPLOY_FINALS_REPLAY_NOTE)
 
 st.markdown("### Coverage & status")
 status_col1, status_col2, status_col3 = st.columns(3)
@@ -111,7 +117,7 @@ with status_col1:
 with status_col2:
     st.metric("Playoff play-by-play", format_status_text(asset_status(config.PLAYOFF_PLAY_BY_PLAY_PATH)))
 with status_col3:
-    st.metric("Playoff predictions", format_status_text(asset_status(config.PLAYOFF_LIVE_PREDICTIONS_PATH)))
+    st.metric("Playoff predictions", format_status_text(asset_status(predictions_path)))
 
 if case_study_df is None or case_study_df.empty:
     focus_games = pd.DataFrame()
@@ -191,11 +197,12 @@ if game_status in {"scheduled", "not_available_yet", "unknown"} or not game_id:
     st.stop()
 
 if predictions_df is None or predictions_df.empty:
-    st.warning(
-        "Playoff live predictions are not available. Run:\n\n"
-        "`python run_pipeline.py --mode run_playoff_case_study_pipeline "
-        "--seasons 2022-23 2023-24 2024-25 2025-26`"
-    )
+    if not using_finals_deploy:
+        st.warning(
+            "Playoff live predictions are not available. Run:\n\n"
+            "`python run_pipeline.py --mode run_playoff_case_study_pipeline "
+            "--seasons 2022-23 2023-24 2024-25 2025-26`"
+        )
     st.stop()
 
 game_preds = predictions_df.loc[predictions_df["game_id"].astype(str) == game_id].copy()
