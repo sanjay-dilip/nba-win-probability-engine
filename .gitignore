@@ -21,22 +21,23 @@ data/processed/*
 data/playoffs/*
 data/logs/*
 
-# Deploy-safe Finals replay export
+# Deploy-safe public dashboard files
 data/deploy/*
 !data/deploy/
 !data/deploy/finals_live_predictions.csv
+!data/deploy/pregame_demo_predictions.csv
+!data/deploy/live_demo_predictions.csv
 
-# Generated outputs
-outputs/charts/*
+# Deploy-safe public report files
 outputs/reports/*
-outputs/predictions/*
-
-# Deploy-safe Finals reports (small CSV summaries; large playoff PBP stays ignored)
+!outputs/reports/
+!outputs/reports/.gitkeep
 !outputs/reports/finals_*.csv
 !outputs/reports/nba_finals_case_study_summary.csv
 !outputs/reports/playoff_coverage_report.csv
 !outputs/reports/project_qa_summary.csv
 !outputs/reports/data_freshness_summary.csv
+!outputs/reports/model_performance_public_summary.csv
 
 # Trained model binaries
 models/*.pkl

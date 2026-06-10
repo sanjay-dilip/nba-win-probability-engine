@@ -270,6 +270,12 @@ Check data freshness:
 python run_pipeline.py --mode check_data_freshness
 ```
 
+Generate evaluation reports:
+
+```bash
+python run_pipeline.py --mode evaluate
+```
+
 Build Finals reports:
 
 ```bash

@@ -20,6 +20,7 @@ if str(APP_DIR) not in sys.path:
 from dashboard_utils import (  # noqa: E402
     BASELINE_MODEL_LABEL,
     DEMO_PREDICTION_NOTE,
+    DEPLOY_PREGAME_DEMO_NOTE,
     PREGAME_TABLE_COLUMNS,
     REQUIRED_PREGAME_PREDICTION_COLUMNS,
     build_games_catalog,
@@ -33,6 +34,7 @@ from dashboard_utils import (  # noqa: E402
     lookup_pregame_features,
     missing_required_columns,
     page_intro_subtitle,
+    resolve_pregame_predictions_source,
 )
 from src import config  # noqa: E402
 
@@ -126,7 +128,7 @@ def build_comparison_chart(comparison_df: pd.DataFrame) -> Optional[go.Figure]:
     return fig
 
 
-predictions_path = config.PREGAME_PREDICTIONS_PATH
+predictions_path, using_deploy_demo = resolve_pregame_predictions_source()
 
 if not predictions_path.exists():
     st.warning(
@@ -135,6 +137,9 @@ if not predictions_path.exists():
         "`python run_pipeline.py --mode predict_pregame`"
     )
     st.stop()
+
+if using_deploy_demo:
+    st.caption(DEPLOY_PREGAME_DEMO_NOTE)
 
 predictions = load_pregame_predictions(str(predictions_path))
 

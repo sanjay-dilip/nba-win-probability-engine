@@ -107,3 +107,54 @@ def test_model_role_display_names():
     baseline, primary = comparison_column_labels()
     assert baseline == BASELINE_MODEL_LABEL
     assert primary == PRIMARY_MODEL_LABEL
+
+
+def test_resolve_pregame_predictions_prefers_processed(tmp_path, monkeypatch):
+    from src import config
+    from dashboard_utils import resolve_pregame_predictions_source
+
+    processed = tmp_path / "processed.csv"
+    deploy = tmp_path / "deploy.csv"
+    processed.write_text("game_id\n1\n", encoding="utf-8")
+    deploy.write_text("game_id\n2\n", encoding="utf-8")
+    monkeypatch.setattr(config, "PREGAME_PREDICTIONS_PATH", processed)
+    monkeypatch.setattr(config, "DEPLOY_PREGAME_DEMO_PREDICTIONS_PATH", deploy)
+
+    path, is_demo = resolve_pregame_predictions_source()
+    assert path == processed
+    assert is_demo is False
+
+
+def test_resolve_pregame_predictions_falls_back_to_deploy(tmp_path, monkeypatch):
+    from src import config
+    from dashboard_utils import resolve_pregame_predictions_source
+
+    deploy = tmp_path / "deploy.csv"
+    deploy.write_text("game_id\n2\n", encoding="utf-8")
+    monkeypatch.setattr(config, "PREGAME_PREDICTIONS_PATH", tmp_path / "missing.csv")
+    monkeypatch.setattr(config, "DEPLOY_PREGAME_DEMO_PREDICTIONS_PATH", deploy)
+
+    path, is_demo = resolve_pregame_predictions_source()
+    assert path == deploy
+    assert is_demo is True
+
+
+def test_format_public_performance_summary():
+    from dashboard_utils import format_public_performance_summary
+
+    df = pd.DataFrame(
+        [
+            {
+                "model": "Pre-game model",
+                "evaluation_setup": "2022-23 to 2024-25 train / 2025-26 test",
+                "accuracy": 0.6824,
+                "roc_auc": 0.7357,
+                "log_loss": 0.5979,
+                "brier_score": 0.2056,
+                "notes": "Predicts winner before tip-off",
+            }
+        ]
+    )
+    table = format_public_performance_summary(df)
+    assert "Model" in table.columns
+    assert table.iloc[0]["Model"] == "Pre-game model"
