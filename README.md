@@ -367,6 +367,6 @@ This project demonstrates my ability to:
 
 **Sanjay Dilip**
 
-* LinkedIn: add your LinkedIn URL here
-* GitHub: add your GitHub profile URL here
-* Email: add your email here
+* (LinkedIn)[https://www.linkedin.com/in/sanjaydilip]
+* (GitHub)[https://www.github.com/sanjay-dilip]
+* (Email)[sanjaydilip725@gmail.com]
