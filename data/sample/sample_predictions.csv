@@ -1,0 +1,19 @@
+game_id,event_num,period,seconds_remaining_game,home_team,away_team,home_score,away_score,home_win_probability,away_win_probability,predicted_winner
+SAMPLE_GAME_001,1,1,2880,Boston Celtics,Miami Heat,0,0,0.620,0.380,Boston Celtics
+SAMPLE_GAME_001,2,1,2520,Boston Celtics,Miami Heat,18,15,0.660,0.340,Boston Celtics
+SAMPLE_GAME_001,3,2,1800,Boston Celtics,Miami Heat,46,40,0.710,0.290,Boston Celtics
+SAMPLE_GAME_001,4,3,1080,Boston Celtics,Miami Heat,72,63,0.800,0.200,Boston Celtics
+SAMPLE_GAME_001,5,4,360,Boston Celtics,Miami Heat,98,88,0.910,0.090,Boston Celtics
+SAMPLE_GAME_001,6,4,0,Boston Celtics,Miami Heat,114,103,0.990,0.010,Boston Celtics
+SAMPLE_GAME_002,1,1,2880,Denver Nuggets,Golden State Warriors,0,0,0.480,0.520,Golden State Warriors
+SAMPLE_GAME_002,2,1,2460,Denver Nuggets,Golden State Warriors,16,20,0.400,0.600,Golden State Warriors
+SAMPLE_GAME_002,3,2,1740,Denver Nuggets,Golden State Warriors,38,44,0.350,0.650,Golden State Warriors
+SAMPLE_GAME_002,4,3,1020,Denver Nuggets,Golden State Warriors,64,67,0.420,0.580,Golden State Warriors
+SAMPLE_GAME_002,5,4,300,Denver Nuggets,Golden State Warriors,92,98,0.250,0.750,Golden State Warriors
+SAMPLE_GAME_002,6,4,0,Denver Nuggets,Golden State Warriors,108,116,0.020,0.980,Golden State Warriors
+SAMPLE_GAME_003,1,1,2880,Milwaukee Bucks,Philadelphia 76ers,0,0,0.560,0.440,Milwaukee Bucks
+SAMPLE_GAME_003,2,1,2490,Milwaukee Bucks,Philadelphia 76ers,14,12,0.580,0.420,Milwaukee Bucks
+SAMPLE_GAME_003,3,2,1770,Milwaukee Bucks,Philadelphia 76ers,40,38,0.600,0.400,Milwaukee Bucks
+SAMPLE_GAME_003,4,3,1050,Milwaukee Bucks,Philadelphia 76ers,66,67,0.470,0.530,Philadelphia 76ers
+SAMPLE_GAME_003,5,4,330,Milwaukee Bucks,Philadelphia 76ers,94,90,0.720,0.280,Milwaukee Bucks
+SAMPLE_GAME_003,6,4,0,Milwaukee Bucks,Philadelphia 76ers,112,105,0.970,0.030,Milwaukee Bucks

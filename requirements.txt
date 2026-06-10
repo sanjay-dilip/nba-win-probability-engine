@@ -1,0 +1,16 @@
+pandas
+numpy
+nba_api
+scikit-learn
+xgboost
+streamlit
+plotly
+matplotlib
+seaborn
+joblib
+python-dotenv
+requests
+tqdm
+jupyter
+ipykernel
+pytest

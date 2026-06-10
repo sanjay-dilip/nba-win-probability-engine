@@ -1,0 +1,4 @@
+game_id,season,game_date,home_team,away_team,home_team_id,away_team_id,status,game_type
+SAMPLE_GAME_001,2024-25,2024-11-12,Boston Celtics,Miami Heat,1610612738,1610612748,Final,regular
+SAMPLE_GAME_002,2024-25,2024-11-13,Denver Nuggets,Golden State Warriors,1610612743,1610612744,Final,regular
+SAMPLE_GAME_003,2024-25,2024-11-15,Milwaukee Bucks,Philadelphia 76ers,1610612749,1610612755,Final,regular

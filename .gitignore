@@ -1,0 +1,56 @@
+# Byte-compiled / cache
+__pycache__/
+*.py[cod]
+
+# Virtual environments
+.venv/
+venv/
+
+# Environment variables
+.env
+
+# OS files
+.DS_Store
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Generated data (kept out of version control)
+data/raw/*
+data/processed/*
+data/playoffs/*
+data/logs/*
+
+# Deploy-safe Finals replay export
+data/deploy/*
+!data/deploy/
+!data/deploy/finals_live_predictions.csv
+
+# Generated outputs
+outputs/charts/*
+outputs/reports/*
+outputs/predictions/*
+
+# Deploy-safe Finals reports (small CSV summaries; large playoff PBP stays ignored)
+!outputs/reports/finals_*.csv
+!outputs/reports/nba_finals_case_study_summary.csv
+!outputs/reports/playoff_coverage_report.csv
+!outputs/reports/project_qa_summary.csv
+!outputs/reports/data_freshness_summary.csv
+
+# Trained model binaries
+models/*.pkl
+
+# Internal handoff file (exclude before public repo cleanup)
+CONTEXT.md
+
+# --- Explicitly keep these tracked ---
+!data/sample/
+!data/sample/*
+!data/manual/
+!models/sample/
+!docs/
+!assets/
+
+# Keep empty tracked folders
+!**/.gitkeep

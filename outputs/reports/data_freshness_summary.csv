@@ -1,0 +1,42 @@
+section,asset,path,status,row_count,unique_games,last_modified,notes
+raw_data,raw_games,data\raw\games.csv,ok,4910,4910,2026-06-09T22:16:45.499847+00:00,"seasons (4): 2022-23, 2023-24, 2024-25, 2025-26"
+raw_data,raw_play_by_play,data\raw\play_by_play.csv,ok,2300734,4910,2026-06-10T06:57:50.093526+00:00,"seasons (4): 2022-23, 2023-24, 2024-25, 2025-26"
+raw_data,raw_team_stats,data\raw\team_stats.csv,ok,106,,2026-06-09T22:16:47.381491+00:00,"seasons (3): 2023-24, 2024-25, 2025-26"
+processed_data,pregame_features,data\processed\pregame_features.csv,ok,4910,4910,2026-06-10T14:36:24.884951+00:00,
+processed_data,live_features,data\processed\live_features.csv,ok,2300734,4910,2026-06-10T14:33:18.799934+00:00,
+processed_data,game_results,data\processed\game_results.csv,ok,4910,4910,2026-06-10T14:33:18.834182+00:00,
+predictions,pregame_predictions,data\processed\pregame_predictions.csv,ok,1225,1225,2026-06-07T19:37:33.663704+00:00,
+predictions,live_predictions,data\processed\live_predictions.csv,ok,571923,1225,2026-06-07T19:37:47.253618+00:00,
+models,pregame_model,models\pregame_model.pkl,ok,,,2026-06-07T18:33:22.243573+00:00,
+models,live_model,models\live_model.pkl,ok,,,2026-06-07T19:30:30.151895+00:00,
+models,pregame_feature_columns,models\pregame_feature_columns.pkl,ok,,,2026-06-07T18:33:22.243573+00:00,
+models,live_feature_columns,models\live_feature_columns.pkl,ok,,,2026-06-07T19:30:30.151895+00:00,
+models,pregame_model_multiseason,models\pregame_model_multiseason.pkl,ok,,,2026-06-10T14:38:05.663438+00:00,
+models,live_model_multiseason,models\live_model_multiseason.pkl,ok,,,2026-06-10T14:38:48.515284+00:00,
+models,pregame_feature_columns_multiseason,models\pregame_feature_columns_multiseason.pkl,ok,,,2026-06-10T14:38:05.664444+00:00,
+models,live_feature_columns_multiseason,models\live_feature_columns_multiseason.pkl,ok,,,2026-06-10T14:38:48.517290+00:00,
+reports,pregame_model_metrics,outputs\reports\pregame_model_metrics.csv,stale,1,,2026-06-07T18:33:22.242765+00:00,dependency newer than file
+reports,live_model_metrics,outputs\reports\live_model_metrics.csv,ok,1,,2026-06-07T19:30:30.151895+00:00,
+reports,evaluation_summary,outputs\reports\evaluation_summary.csv,ok,58,,2026-06-08T00:53:03.211206+00:00,
+reports,pbp_coverage_report,outputs\reports\play_by_play_coverage_report.csv,ok,4,,2026-06-10T06:58:40.569909+00:00,coverage 100.0%; 1225 games collected; 586738 events
+reports,multiseason_training_readiness,outputs\reports\multiseason_training_readiness.csv,ok,37,,2026-06-10T14:38:16.909660+00:00,
+reports,multiseason_coverage_report,outputs\reports\multiseason_coverage_report.csv,ok,21,,2026-06-10T14:34:02.561260+00:00,
+reports,pregame_model_metrics_multiseason,outputs\reports\pregame_model_metrics_multiseason.csv,ok,1,,2026-06-10T14:38:05.656841+00:00,
+reports,live_model_metrics_multiseason,outputs\reports\live_model_metrics_multiseason.csv,ok,1,,2026-06-10T14:38:48.507966+00:00,
+reports,model_comparison_summary,outputs\reports\model_comparison_summary.csv,ok,16,,2026-06-10T15:12:33.847955+00:00,optional — run compare_models to generate
+reports,model_comparison_detail,outputs\reports\model_comparison_detail.csv,ok,32,,2026-06-10T15:12:33.847955+00:00,optional — run compare_models to generate
+reports,live_phase_comparison_summary,outputs\reports\live_phase_comparison_summary.csv,ok,9,,2026-06-10T15:12:33.847955+00:00,optional — run compare_models to generate
+reports,calibration_comparison_summary,outputs\reports\calibration_comparison_summary.csv,ok,40,,2026-06-10T15:12:33.847955+00:00,optional — run compare_models to generate
+playoffs,playoff_games,data\playoffs\raw\playoff_games.csv,ok,333,333,2026-06-10T17:20:52.402917+00:00,optional — run collect_playoff_games
+playoffs,playoff_play_by_play,data\playoffs\raw\playoff_play_by_play.csv,ok,154317,333,2026-06-10T15:57:57.535334+00:00,optional — run collect_playoff_play_by_play
+playoffs,playoff_live_features,data\playoffs\processed\playoff_live_features.csv,ok,154317,333,2026-06-10T18:58:21.212126+00:00,optional — run build_playoff_live_features
+playoffs,playoff_live_predictions,data\playoffs\processed\playoff_live_predictions.csv,ok,154317,333,2026-06-10T18:58:25.162251+00:00,optional — run predict_playoff_live
+playoffs,nba_finals_case_study_summary,outputs\reports\nba_finals_case_study_summary.csv,ok,7,,2026-06-10T18:58:27.928891+00:00,optional — run build_finals_case_study
+playoffs,playoff_coverage_report,outputs\reports\playoff_coverage_report.csv,ok,4,,2026-06-10T18:58:07.227082+00:00,optional — run check_playoff_coverage
+playoffs,finals_pregame_features,data\playoffs\processed\finals_pregame_features.csv,ok,7,7,2026-06-10T18:59:30.042183+00:00,optional — run build_finals_pregame_predictions
+playoffs,finals_pregame_predictions,data\playoffs\processed\finals_pregame_predictions.csv,ok,7,7,2026-06-10T18:59:30.081682+00:00,optional — run build_finals_pregame_predictions
+playoffs,finals_upcoming_predictions,outputs\reports\finals_upcoming_predictions.csv,ok,7,,2026-06-10T18:59:33.084216+00:00,optional — run build_finals_pregame_predictions
+manual,finals_schedule_overrides,data\manual\finals_schedule_overrides.csv,ok,4,4,2026-06-10T18:28:36.844634+00:00,4 manual override(s)
+playoffs,finals_projected_series_path,outputs\reports\finals_projected_series_path.csv,ok,7,,2026-06-10T18:59:33.123891+00:00,optional — run build_finals_projected_series_path
+manual,postgame_results,data\manual\postgame_results.csv,not_required,,,,optional — not recorded
+logs,data_refresh_log,data\logs\data_refresh_log.csv,ok,5265,,2026-06-10T17:20:50.756858+00:00,"latest log 2026-06-10T17:20:50.756858+00:00 (LeagueGameFinder, success)"

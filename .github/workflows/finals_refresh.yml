@@ -1,0 +1,60 @@
+# Optional scheduled refresh for Finals case-study outputs after deployment.
+#
+# Notes:
+# - Does NOT train models.
+# - NBA API availability and rate limits may affect reliability.
+# - Large playoff play-by-play files under data/playoffs/ remain gitignored by default;
+#   this workflow commits small Finals reports when they change.
+# - Use workflow_dispatch for manual runs; schedule is conservative.
+
+name: Finals data refresh
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Weekly — adjust or disable if API limits are a concern
+    - cron: "0 12 * * 1"
+
+permissions:
+  contents: write
+
+jobs:
+  refresh-finals:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Collect playoff metadata and play-by-play (2025-26)
+        run: |
+          python run_pipeline.py --mode collect_playoff_games --seasons 2025-26
+          python run_pipeline.py --mode collect_playoff_play_by_play --seasons 2025-26
+        continue-on-error: true
+
+      - name: Run local playoff case-study pipeline (no training)
+        run: |
+          python run_pipeline.py --mode run_playoff_case_study_pipeline --seasons 2022-23 2023-24 2024-25 2025-26
+
+      - name: Commit deploy-safe Finals reports if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            data/deploy/finals_live_predictions.csv \
+            data/deploy/nba_finals_case_study_summary.csv \
+            data/deploy/playoff_coverage_report.csv \
+            data/deploy/project_qa_summary.csv \
+            data/deploy/data_freshness_summary.csv \
+            data/manual/finals_schedule_overrides.csv || true
+          if git diff --staged --quiet; then
+            echo "No deploy-safe Finals report changes to commit."
+          else
+            git commit -m "chore: refresh Finals case-study reports [skip ci]"
+            git push
+          fi

@@ -1,0 +1,5 @@
+season,finals_game_number,game_id,game_date,home_team,away_team,home_team_id,away_team_id,status,season_type,source,notes
+2025-26,4,0042500404,2026-06-11,New York Knicks,San Antonio Spurs,1610612752,1610612759,scheduled,Playoffs,manual_schedule,Game 4 at MSG — schedule metadata only; no scores or results
+2025-26,5,0042500405,2026-06-13,San Antonio Spurs,New York Knicks,1610612759,1610612752,scheduled,Playoffs,manual_schedule,Game 5 at Frost Bank Center — schedule metadata only; no scores or results
+2025-26,6,0042500406,2026-06-16,New York Knicks,San Antonio Spurs,1610612752,1610612759,if_necessary_scheduled,Playoffs,manual_schedule,Game 6 at MSG if necessary — schedule metadata only; no scores or results
+2025-26,7,0042500407,2026-06-18,San Antonio Spurs,New York Knicks,1610612759,1610612752,if_necessary_scheduled,Playoffs,manual_schedule,Game 7 at Frost Bank Center if necessary — schedule metadata only; no scores or results
