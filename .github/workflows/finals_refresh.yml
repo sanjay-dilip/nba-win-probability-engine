@@ -12,8 +12,13 @@ name: Finals data refresh
 on:
   workflow_dispatch:
   schedule:
-    # Weekly — adjust or disable if API limits are a concern
-    - cron: "0 12 * * 1"
+    # Overnight refresh after Finals games
+    - cron: "45 4 * * 4"
+    - cron: "30 6 * * 6"
+
+    # Morning/midday backup refresh
+    - cron: "0 14 * * 4"
+    - cron: "0 14 * * 6"
 
 permissions:
   contents: write
