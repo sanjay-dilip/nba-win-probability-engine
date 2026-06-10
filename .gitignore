@@ -38,6 +38,7 @@ outputs/reports/*
 !outputs/reports/project_qa_summary.csv
 !outputs/reports/data_freshness_summary.csv
 !outputs/reports/model_performance_public_summary.csv
+!outputs/reports/evaluation_public_summary.csv
 
 # Trained model binaries
 models/*.pkl

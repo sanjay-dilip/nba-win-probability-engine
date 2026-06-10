@@ -603,6 +603,23 @@ def resolve_live_predictions_source() -> Tuple[Path, bool]:
     return project_config.LIVE_PREDICTIONS_PATH, False
 
 
+def format_evaluation_public_summary(df: pd.DataFrame) -> pd.DataFrame:
+    """Return a display-friendly public evaluation summary table."""
+    if df is None or df.empty:
+        return pd.DataFrame()
+    columns = {
+        "section": "Section",
+        "metric": "Metric",
+        "value": "Value",
+        "notes": "Notes",
+    }
+    work = df.copy()
+    for col in columns:
+        if col not in work.columns:
+            work[col] = ""
+    return work[list(columns.keys())].rename(columns=columns)
+
+
 def format_public_performance_summary(df: pd.DataFrame) -> pd.DataFrame:
     """Return a display-friendly public model performance summary table."""
     if df is None or df.empty:

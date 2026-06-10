@@ -29,6 +29,7 @@ from dashboard_utils import (  # noqa: E402
     format_large_number,
     format_metric_value,
     format_pct,
+    format_evaluation_public_summary,
     format_public_performance_summary,
     format_status_panel_text,
     load_freshness_summary,
@@ -185,9 +186,23 @@ def _calibration_bar_chart(calibration_df: pd.DataFrame, title: str) -> go.Figur
 
 
 evaluation_ready = _report_exists(config.EVALUATION_SUMMARY_PATH)
+evaluation_public_ready = _report_exists(config.EVALUATION_PUBLIC_SUMMARY_PATH)
 
 if not evaluation_ready:
-    st.warning(f"Evaluation reports not found. Generate them with:\n\n{EVALUATE_CMD}")
+    if evaluation_public_ready:
+        evaluation_public_df = load_report_csv(str(config.EVALUATION_PUBLIC_SUMMARY_PATH))
+        st.subheader("Evaluation overview")
+        st.caption(
+            "Deployment summary: full local evaluation reports are not committed, "
+            "but the key model results are shown here."
+        )
+        st.dataframe(
+            format_evaluation_public_summary(evaluation_public_df),
+            use_container_width=True,
+            hide_index=True,
+        )
+    else:
+        st.warning(f"Evaluation reports not found. Generate them with:\n\n{EVALUATE_CMD}")
 
 # ---------------------------------------------------------------------------
 # 1. Primary model performance

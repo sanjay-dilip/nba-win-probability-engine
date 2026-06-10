@@ -139,6 +139,24 @@ def test_resolve_pregame_predictions_falls_back_to_deploy(tmp_path, monkeypatch)
     assert is_demo is True
 
 
+def test_format_evaluation_public_summary():
+    from dashboard_utils import format_evaluation_public_summary
+
+    df = pd.DataFrame(
+        [
+            {
+                "section": "Primary pre-game model",
+                "metric": "Accuracy",
+                "value": "68.2%",
+                "notes": "2025-26 future-season holdout",
+            }
+        ]
+    )
+    table = format_evaluation_public_summary(df)
+    assert table.iloc[0]["Section"] == "Primary pre-game model"
+    assert table.iloc[0]["Value"] == "68.2%"
+
+
 def test_format_public_performance_summary():
     from dashboard_utils import format_public_performance_summary
 
