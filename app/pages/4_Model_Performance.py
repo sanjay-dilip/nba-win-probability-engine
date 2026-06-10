@@ -191,24 +191,56 @@ evaluation_public_summary_path = getattr(
     "EVALUATION_PUBLIC_SUMMARY_PATH",
     config.REPORTS_DIR / "evaluation_public_summary.csv",
 )
-
 evaluation_public_ready = _report_exists(evaluation_public_summary_path)
 
-if not evaluation_ready:
-    if evaluation_public_ready:
-        evaluation_public_df = load_report_csv(str(evaluation_public_summary_path))
-        st.subheader("Evaluation overview")
-        st.caption(
-            "Deployment summary: full local evaluation reports are not committed, "
-            "but the key model results are shown here."
-        )
-        st.dataframe(
-            format_evaluation_public_summary(evaluation_public_df),
-            use_container_width=True,
-            hide_index=True,
-        )
-    else:
-        st.warning(f"Evaluation reports not found. Generate them with:\n\n{EVALUATE_CMD}")
+model_performance_public_summary_path = getattr(
+    config,
+    "MODEL_PERFORMANCE_PUBLIC_SUMMARY_PATH",
+    config.REPORTS_DIR / "model_performance_public_summary.csv",
+)
+
+public_summary_df: Optional[pd.DataFrame] = None
+if _report_exists(model_performance_public_summary_path):
+    public_summary_df = load_report_csv(str(model_performance_public_summary_path))
+
+evaluation_public_df: Optional[pd.DataFrame] = None
+if evaluation_public_ready:
+    evaluation_public_df = load_report_csv(str(evaluation_public_summary_path))
+
+has_full_pregame = _report_exists(config.PREGAME_MODEL_METRICS_MULTISEASON_PATH)
+has_full_live = _report_exists(config.LIVE_MODEL_METRICS_MULTISEASON_PATH)
+has_public_summary = public_summary_df is not None and not public_summary_df.empty
+comparison_ready = _report_exists(config.MODEL_COMPARISON_SUMMARY_PATH)
+
+public_summary_active = has_public_summary or evaluation_public_ready
+
+detailed_reports_available = any(
+    [
+        evaluation_ready,
+        comparison_ready,
+        has_full_pregame,
+        has_full_live,
+        _report_exists(config.PHASE_COMPARISON_SUMMARY_PATH),
+        _report_exists(config.LIVE_MODEL_PHASE_METRICS_MULTISEASON_PATH),
+        _report_exists(config.LIVE_MODEL_PHASE_METRICS_PATH),
+        _report_exists(config.PREGAME_MODEL_CALIBRATION_MULTISEASON_PATH),
+        _report_exists(config.LIVE_MODEL_CALIBRATION_MULTISEASON_PATH),
+        _report_exists(config.PREGAME_MODEL_CALIBRATION_PATH),
+        _report_exists(config.LIVE_MODEL_CALIBRATION_PATH),
+        _report_exists(config.PREGAME_PREDICTION_SUMMARY_PATH),
+        _report_exists(config.LIVE_PREDICTION_SUMMARY_PATH),
+    ]
+)
+
+deployment_mode = public_summary_active and not detailed_reports_available
+
+DEPLOYMENT_DETAIL_CAPTION = (
+    "Deployment summary: detailed local evaluation reports are not committed "
+    "to keep the repo lightweight."
+)
+
+if not evaluation_ready and not deployment_mode and not evaluation_public_ready:
+    st.warning(f"Evaluation reports not found. Generate them with:\n\n{EVALUATE_CMD}")
 
 # ---------------------------------------------------------------------------
 # 1. Primary model performance
@@ -218,74 +250,90 @@ st.subheader(f"{PRIMARY_MODEL_LABEL} performance")
 st.caption(PRIMARY_MODEL_DESCRIPTION)
 st.caption(f"Train: {PRIMARY_MODEL_TRAIN_SEASONS} · Test: {PRIMARY_MODEL_TEST_SEASON}")
 
-public_summary_df: Optional[pd.DataFrame] = None
-if _report_exists(config.MODEL_PERFORMANCE_PUBLIC_SUMMARY_PATH):
-    public_summary_df = load_report_csv(str(config.MODEL_PERFORMANCE_PUBLIC_SUMMARY_PATH))
-
-has_full_pregame = _report_exists(config.PREGAME_MODEL_METRICS_MULTISEASON_PATH)
-has_full_live = _report_exists(config.LIVE_MODEL_METRICS_MULTISEASON_PATH)
-has_public_summary = public_summary_df is not None and not public_summary_df.empty
-
-if not has_full_pregame and not has_full_live and has_public_summary:
-    st.dataframe(
-        format_public_performance_summary(public_summary_df),
-        use_container_width=True,
-        hide_index=True,
-    )
+if deployment_mode:
+    if has_public_summary:
+        st.dataframe(
+            format_public_performance_summary(public_summary_df),
+            use_container_width=True,
+            hide_index=True,
+        )
+    if evaluation_public_df is not None and not evaluation_public_df.empty:
+        st.markdown("**Evaluation overview**")
+        st.dataframe(
+            format_evaluation_public_summary(evaluation_public_df),
+            use_container_width=True,
+            hide_index=True,
+        )
+    st.caption(DEPLOYMENT_DETAIL_CAPTION)
+    with st.expander("Detailed local reports"):
+        st.caption(
+            "Baseline comparison, phase performance, calibration, and full-dataset "
+            "summaries are available when the full local pipeline is run."
+        )
 else:
-    primary_col1, primary_col2 = st.columns(2)
+    if not has_full_pregame and not has_full_live and has_public_summary:
+        st.dataframe(
+            format_public_performance_summary(public_summary_df),
+            use_container_width=True,
+            hide_index=True,
+        )
+    else:
+        primary_col1, primary_col2 = st.columns(2)
 
-    with primary_col1:
-        st.markdown("**Pre-game model**")
-        if has_full_pregame:
-            pregame_primary = load_report_csv(str(config.PREGAME_MODEL_METRICS_MULTISEASON_PATH))
-            st.table(
-                _metrics_table(
-                    pregame_primary,
-                    ["accuracy", "roc_auc", "log_loss", "brier_score", "n_train", "n_test", "n_features"],
+        with primary_col1:
+            st.markdown("**Pre-game model**")
+            if has_full_pregame:
+                pregame_primary = load_report_csv(str(config.PREGAME_MODEL_METRICS_MULTISEASON_PATH))
+                st.table(
+                    _metrics_table(
+                        pregame_primary,
+                        ["accuracy", "roc_auc", "log_loss", "brier_score", "n_train", "n_test", "n_features"],
+                    )
                 )
-            )
-        elif has_public_summary:
-            pregame_public = public_summary_df.loc[
-                public_summary_df["model"].astype(str).str.contains("Pre-game", case=False, na=False)
-            ]
-            if not pregame_public.empty:
-                st.dataframe(
-                    format_public_performance_summary(pregame_public),
-                    use_container_width=True,
-                    hide_index=True,
-                )
-        else:
-            st.info("Primary pre-game metrics not available.")
+            elif has_public_summary:
+                pregame_public = public_summary_df.loc[
+                    public_summary_df["model"].astype(str).str.contains("Pre-game", case=False, na=False)
+                ]
+                if not pregame_public.empty:
+                    st.dataframe(
+                        format_public_performance_summary(pregame_public),
+                        use_container_width=True,
+                        hide_index=True,
+                    )
+            else:
+                st.info("Primary pre-game metrics not available.")
 
-    with primary_col2:
-        st.markdown("**Live model**")
-        if has_full_live:
-            live_primary = load_report_csv(str(config.LIVE_MODEL_METRICS_MULTISEASON_PATH))
-            st.table(
-                _metrics_table(
-                    live_primary,
-                    ["accuracy", "roc_auc", "log_loss", "brier_score", "train_games", "test_games", "n_features"],
+        with primary_col2:
+            st.markdown("**Live model**")
+            if has_full_live:
+                live_primary = load_report_csv(str(config.LIVE_MODEL_METRICS_MULTISEASON_PATH))
+                st.table(
+                    _metrics_table(
+                        live_primary,
+                        ["accuracy", "roc_auc", "log_loss", "brier_score", "train_games", "test_games", "n_features"],
+                    )
                 )
-            )
-        elif has_public_summary:
-            live_public = public_summary_df.loc[
-                public_summary_df["model"].astype(str).str.contains("Live", case=False, na=False)
-            ]
-            if not live_public.empty:
-                st.dataframe(
-                    format_public_performance_summary(live_public),
-                    use_container_width=True,
-                    hide_index=True,
-                )
-        else:
-            st.info("Primary live metrics not available.")
+            elif has_public_summary:
+                live_public = public_summary_df.loc[
+                    public_summary_df["model"].astype(str).str.contains("Live", case=False, na=False)
+                ]
+                if not live_public.empty:
+                    st.dataframe(
+                        format_public_performance_summary(live_public),
+                        use_container_width=True,
+                        hide_index=True,
+                    )
+            else:
+                st.info("Primary live metrics not available.")
 
-st.info(
-    "The multi-season model is the primary evaluation target. "
-    "The future-season holdout is stricter and closer to real deployment — "
-    "lower pre-game accuracy under that holdout should be interpreted in context."
-)
+    st.info(
+        "The multi-season model is the primary evaluation target. "
+        "The future-season holdout is stricter and closer to real deployment — "
+        "lower pre-game accuracy under that holdout should be interpreted in context."
+    )
+
+if deployment_mode:
+    st.stop()
 
 # ---------------------------------------------------------------------------
 # 2. Baseline comparison
@@ -296,8 +344,6 @@ st.caption(
     f"**{BASELINE_MODEL_LABEL}:** {BASELINE_MODEL_DESCRIPTION} "
     "Metrics should not be compared as identical experiments."
 )
-
-comparison_ready = _report_exists(config.MODEL_COMPARISON_SUMMARY_PATH)
 
 if comparison_ready:
     comparison_df = load_report_csv(str(config.MODEL_COMPARISON_SUMMARY_PATH))
