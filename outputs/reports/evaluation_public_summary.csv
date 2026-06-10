@@ -1,0 +1,8 @@
+section,metric,value,notes
+Primary pre-game model,Accuracy,68.2%,2025-26 future-season holdout
+Primary pre-game model,ROC-AUC,0.7357,2025-26 future-season holdout
+Primary live model,Accuracy,74.7%,2025-26 future-season holdout (event-level rows)
+Primary live model,ROC-AUC,0.8300,2025-26 future-season holdout (event-level rows)
+Data processed,Regular-season games,"4,910",processed
+Data processed,Regular-season play-by-play rows,2.3M+,processed
+Case study,Playoff games,333,included

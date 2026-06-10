@@ -161,6 +161,7 @@ FUTURE_TEST_SEASON = "2025-26"
 # Evaluation layer outputs (Build 13). Summaries are written by src/evaluate.py
 # from saved predictions and existing training metric reports — no retraining.
 EVALUATION_SUMMARY_PATH = REPORTS_DIR / "evaluation_summary.csv"
+EVALUATION_PUBLIC_SUMMARY_PATH = REPORTS_DIR / "evaluation_public_summary.csv"
 PREGAME_PREDICTION_SUMMARY_PATH = REPORTS_DIR / "pregame_prediction_summary.csv"
 LIVE_PREDICTION_SUMMARY_PATH = REPORTS_DIR / "live_prediction_summary.csv"
 BIGGEST_MOMENTUM_SWINGS_PATH = REPORTS_DIR / "biggest_momentum_swings.csv"
