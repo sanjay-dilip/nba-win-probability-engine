@@ -44,7 +44,7 @@ def git_has_changes(cwd: Path) -> bool:
 
 
 def main() -> int:
-    github_token = os.environ.get("GITHUB_TOKEN")
+    github_token = (os.environ.get("GITHUB_TOKEN") or "").strip()
     github_repository = os.environ.get(
         "GITHUB_REPOSITORY",
         "sanjay-dilip/nba-win-probability-engine",
