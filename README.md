@@ -399,6 +399,6 @@ This project demonstrates my ability to:
 
 **Sanjay Dilip**
 
-* (LinkedIn)[https://www.linkedin.com/in/sanjaydilip]
-* (GitHub)[https://www.github.com/sanjay-dilip]
-* (Email)[sanjaydilip725@gmail.com]
+* [LinkedIn](https://www.linkedin.com/in/sanjaydilip)
+* [GitHub](https://www.github.com/sanjay-dilip)
+* [Email](sanjaydilip725@gmail.com)
