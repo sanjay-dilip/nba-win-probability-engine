@@ -26,6 +26,7 @@ The project includes a full data pipeline, leakage-safe feature engineering, reg
 * Added a Streamlit dashboard for exploring predictions, live replay, model performance, and NBA Finals projections.
 * Built a 2025-26 NBA Finals case study with pre-game predictions, live replay for completed games, and a projected series path.
 * Added QA, data freshness checks, tests, and deploy-safe report exports for GitHub and dashboard use.
+* Deployed scheduled cloud automation using Google Cloud Run Jobs and Google Cloud Scheduler to refresh deploy-safe Finals outputs.
 
 ## Results / Outcomes
 
@@ -124,17 +125,20 @@ This project also helped me practice explaining technical work clearly for both 
 
 ## Tech Stack
 
-* Python
-* pandas
-* NumPy
-* scikit-learn
-* Streamlit
-* Plotly
-* nba_api
-* joblib
-* pytest
-* Git / GitHub
-* GitHub Actions
+- Python
+- pandas
+- NumPy
+- scikit-learn
+- Streamlit
+- Plotly
+- nba_api
+- joblib
+- pytest
+- Git / GitHub
+= Google Cloud Run Jobs
+- Google Cloud Scheduler
+- Google Secret Manager
+- Google Artifact Registry
 
 ## Project Workflow
 
@@ -163,6 +167,20 @@ The project follows a repeatable pipeline:
 
 8. **QA and packaging**
    Run tests, data freshness checks, and project QA before committing GitHub-ready files.
+
+## Deployment and Automation
+
+The public dashboard is deployed with Streamlit Community Cloud and reads lightweight deploy-safe CSVs and reports from the GitHub repository.
+
+Scheduled refresh automation is handled through Google Cloud:
+
+* **Google Cloud Run Jobs** runs the refresh container.
+* **Google Cloud Scheduler** triggers the refresh job at scheduled post-game times.
+* **Google Secret Manager** stores the GitHub token used by the refresh job.
+* **Google Artifact Registry** stores the Docker image for the refresh container.
+* The refresh job collects available 2025-26 playoff data, rebuilds Finals case-study outputs, updates deploy-safe CSVs and reports, and pushes changed files back to GitHub.
+
+This setup keeps the deployed dashboard stable while allowing the Finals replay and reports to refresh when new NBA API data is available. If the upstream NBA API does not return new data immediately, the dashboard continues to use the latest successfully committed deploy-safe outputs.
 
 ## Data Source
 
@@ -306,25 +324,34 @@ nba-win-probability-engine/
 │   ├── Home.py
 │   └── pages/
 │
+├── assets/
+│   └── screenshots/             # Dashboard screenshots used in README
+│
 ├── data/
 │   ├── sample/                  # Small committed sample CSVs
-│   ├── deploy/                  # Deploy-safe Finals live replay export
+│   ├── deploy/                  # Deploy-safe dashboard and Finals replay exports
 │   ├── manual/                  # Manual schedule/result inputs
 │   ├── raw/                     # Raw data, gitignored except placeholders
 │   └── processed/               # Processed data, gitignored except placeholders
 │
 ├── docs/                        # Architecture, model card, data dictionary, limitations
+├── models/                      # Lightweight model artifacts used for scheduled refresh
 ├── notebooks/                   # Exploration and experimentation notebooks
 ├── outputs/
 │   └── reports/                 # Selected deploy-safe reports
 │
+├── scripts/
+│   └── cloud_run_refresh.py     # Google Cloud Run refresh entry point
+│
 ├── src/                         # Core pipeline code
 ├── tests/                       # Unit tests
-├── .github/workflows/           # Optional Finals refresh workflow
+├── .github/workflows/           # Legacy/manual workflow notice
+├── Dockerfile                   # Cloud Run refresh container
 ├── requirements.txt
 ├── run_pipeline.py
 └── README.md
 ```
+
 
 ## What This Project Demonstrates
 
@@ -339,6 +366,7 @@ This project demonstrates my ability to:
 * write tests for data and pipeline logic,
 * build a dashboard from saved model outputs,
 * document a project clearly for GitHub,
+* deploy scheduled cloud automation using Google Cloud Run Jobs and Google Cloud Scheduler,
 * package a project without committing large raw datasets.
 
 ## What I Learned
@@ -355,19 +383,17 @@ This project demonstrates my ability to:
 * The primary models are trained on regular-season games. Playoff and NBA Finals outputs are treated as out-of-distribution case studies.
 * Live model metrics are event-level and should not be interpreted as one prediction per game.
 * The project uses logistic regression baselines. More advanced models may improve performance but would need careful evaluation.
-* Full raw NBA datasets and trained model artifacts are not committed to GitHub because of size and reproducibility concerns.
+*  Full raw and processed NBA datasets are not committed to GitHub. The repository includes only lightweight model artifacts and deploy-safe reports needed for dashboard review and scheduled cloud refresh.
 * Upcoming Finals predictions depend on schedule and matchup metadata being available.
 * The project is for analytics and portfolio demonstration only. It is not betting advice.
 
 ## Future Improvements
 
-* Add a deployed public Streamlit link.
-* Add dashboard screenshots to the README.
 * Add stronger playoff-specific modeling instead of applying regular-season models directly to playoff games.
 * Add more features such as injuries, travel, betting-market lines, and player availability if reliable data is available.
-* Improve calibration and compare additional models.
-* Make the GitHub Actions refresh workflow more robust against API failures.
-* Add more dashboard-level tests.
+* Improve calibration and compare additional models beyond logistic regression baselines.
+* Add more dashboard-level tests for deployed Streamlit pages.
+* Expand automation monitoring with clearer cloud logs, alerts, and failure notifications.
 
 ## Contact
 
