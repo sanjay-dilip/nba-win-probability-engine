@@ -71,6 +71,61 @@ upcoming_df = load_optional_csv(config.FINALS_UPCOMING_PREDICTIONS_REPORT_PATH)
 projected_df = load_optional_csv(config.FINALS_PROJECTED_SERIES_PATH)
 predictions_df = load_optional_csv(config.PLAYOFF_LIVE_PREDICTIONS_PATH)
 
+def safe_bool(value) -> bool:
+    """Convert CSV-loaded boolean-like values safely."""
+    if pd.isna(value):
+        return False
+
+    if isinstance(value, bool):
+        return value
+
+    value_text = str(value).strip().lower()
+
+    if value_text in {"true", "1", "yes", "y"}:
+        return True
+
+    if value_text in {"false", "0", "no", "n", "", "none", "nan"}:
+        return False
+
+    return False
+
+
+def is_completed_finals_row(row) -> bool:
+    """Return True if a Finals prediction row represents a completed game."""
+    if "final_result_available" in row.index and safe_bool(row["final_result_available"]):
+        return True
+
+    for col in row.index:
+        lower_col = str(col).lower()
+        value = row[col]
+
+        if pd.isna(value):
+            continue
+
+        value_text = str(value).strip().lower()
+
+        if value_text in {"", "nan", "none"}:
+            continue
+
+        if lower_col in {"actual_winner", "winner_actual", "actual_result", "final_winner"}:
+            return True
+
+        if lower_col in {"game_status", "status"} and (
+            "final" in value_text or "completed" in value_text
+        ):
+            return True
+
+    return False
+
+
+def filter_unplayed_finals_predictions(df: pd.DataFrame | None) -> pd.DataFrame | None:
+    """Keep only Finals rows that should still appear as upcoming/prediction rows."""
+    if df is None or df.empty:
+        return df
+
+    completed_mask = df.apply(is_completed_finals_row, axis=1)
+    return df.loc[~completed_mask].copy()
+
 if summary_df is None or summary_df.empty:
     st.warning(
         "Finals case-study summary not found. Generate outputs with:\n\n"
@@ -87,6 +142,8 @@ if finals_df.empty:
 finals_df = finals_df.sort_values("finals_game_number").reset_index(drop=True)
 if upcoming_df is not None:
     upcoming_df = upcoming_df.sort_values("finals_game_number").reset_index(drop=True)
+
+unplayed_upcoming_df = filter_unplayed_finals_predictions(upcoming_df)
 
 st.markdown("### Series overview")
 overview = build_finals_overview_display(finals_df, upcoming_df)
@@ -134,11 +191,10 @@ else:
     )
 
 st.markdown("### Official scheduled predictions")
-if upcoming_df is not None:
-    scheduled_preds = upcoming_df.loc[
-        (upcoming_df["game_status"] == "scheduled")
-        & (upcoming_df["pregame_prediction_available"].astype(bool))
-        & (~upcoming_df["final_result_available"].astype(bool))
+if unplayed_upcoming_df is not None:
+    scheduled_preds = unplayed_upcoming_df.loc[
+        (unplayed_upcoming_df["game_status"] == "scheduled")
+        & (unplayed_upcoming_df["pregame_prediction_available"].map(safe_bool))
     ].sort_values("finals_game_number")
     if not scheduled_preds.empty:
         for _, row in scheduled_preds.iterrows():
@@ -151,10 +207,10 @@ if upcoming_df is not None:
         st.caption("No official scheduled pre-game predictions are available yet.")
 
 st.markdown("### Conditional scheduled predictions")
-if upcoming_df is not None:
-    conditional_preds = upcoming_df.loc[
-        (upcoming_df["game_status"] == "if_necessary_scheduled")
-        & (upcoming_df["pregame_prediction_available"].astype(bool))
+if unplayed_upcoming_df is not None:
+    conditional_preds = unplayed_upcoming_df.loc[
+        (unplayed_upcoming_df["game_status"] == "if_necessary_scheduled")
+        & (unplayed_upcoming_df["pregame_prediction_available"].map(safe_bool))
     ].sort_values("finals_game_number")
     if not conditional_preds.empty:
         for _, row in conditional_preds.iterrows():
@@ -174,7 +230,11 @@ if upcoming_df is not None:
         )
 
 st.markdown("### Next available Finals prediction")
-next_game = find_next_upcoming_finals_prediction(upcoming_df) if upcoming_df is not None else None
+next_game = (
+    find_next_upcoming_finals_prediction(unplayed_upcoming_df)
+    if unplayed_upcoming_df is not None
+    else None
+)
 if next_game is not None:
     ncol1, ncol2, ncol3 = st.columns(3)
     with ncol1:
@@ -214,7 +274,7 @@ game_id = str(selected.get("game_id", "")).strip()
 game_status = str(selected.get("game_status", "unknown"))
 game_num = int(selected.get("finals_game_number", 0))
 can_replay = finals_game_can_show_replay(selected)
-pregame_avail = bool(selected.get("pregame_prediction_available", False))
+pregame_avail = safe_bool(selected.get("pregame_prediction_available", False))
 
 st.markdown("#### Pre-game prediction")
 if pregame_avail:
@@ -228,7 +288,7 @@ if pregame_avail:
         if pd.notna(away_p):
             st.write(f"Away ({selected.get('away_team', 'TBD')}): {format_pct(away_p)}")
     with pcol2:
-        if selected.get("final_result_available"):
+        if safe_bool(selected.get("final_result_available")):
             pre_ok = selected.get("pregame_prediction_correct_if_final")
             if pd.notna(pre_ok):
                 st.write(f"Pre-game prediction correct: {'Yes' if pre_ok else 'No'}")
