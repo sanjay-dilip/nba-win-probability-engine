@@ -1,54 +1,52 @@
 section,check,status,details,recommended_action
-data_files,raw_games,pass,Found: data\raw\games.csv,
-data_files,raw_play_by_play,pass,Found: data\raw\play_by_play.csv,
-data_files,raw_team_stats,pass,Found: data\raw\team_stats.csv,
-data_files,pregame_features,pass,Found: data\processed\pregame_features.csv,
-data_files,live_features,pass,Found: data\processed\live_features.csv,
-data_files,game_results,pass,Found: data\processed\game_results.csv,
-data_files,pregame_predictions,pass,Found: data\processed\pregame_predictions.csv,
-data_files,live_predictions,pass,Found: data\processed\live_predictions.csv,
-model_artifacts,pregame_model,pass,Found: models\pregame_model.pkl,
-model_artifacts,pregame_feature_columns,pass,Found: models\pregame_feature_columns.pkl,
-model_artifacts,live_model,pass,Found: models\live_model.pkl,
-model_artifacts,live_feature_columns,pass,Found: models\live_feature_columns.pkl,
-reports,pregame_model_metrics,pass,Found: outputs\reports\pregame_model_metrics.csv,
-reports,live_model_metrics,pass,Found: outputs\reports\live_model_metrics.csv,
-reports,evaluation_summary,pass,Found: outputs\reports\evaluation_summary.csv,
-reports,data_freshness_summary,pass,Found: outputs\reports\data_freshness_summary.csv,
-reports,pbp_coverage_report,pass,Found: outputs\reports\play_by_play_coverage_report.csv,
-dashboard,app_home,pass,Found: app\Home.py,
-dashboard,dashboard_utils,pass,Found: app\dashboard_utils.py,
-dashboard,page_pregame_predictor,pass,Found: app\pages\1_Pregame_Predictor.py,
-dashboard,page_live_replay,pass,Found: app\pages\2_Live_Replay.py,
-dashboard,page_postgame_override,pass,Found: app\pages\3_Postgame_Override.py,
-dashboard,page_model_performance,pass,Found: app\pages\4_Model_Performance.py,
-dashboard,page_nba_finals_case_study,pass,Found: app\pages\5_NBA_Finals_Case_Study.py,
-dashboard,page_2025_26_nba_finals,pass,Found: app\pages\6_2025_26_NBA_Finals.py,
-season_columns,raw_games,pass,season column present in data\raw\games.csv,
-season_columns,raw_play_by_play,pass,season column present in data\raw\play_by_play.csv,
-season_columns,pregame_features,pass,season column present in data\processed\pregame_features.csv,
-season_columns,live_features,pass,season column present in data\processed\live_features.csv,
-season_columns,game_results,pass,season column present in data\processed\game_results.csv,
+data_files,raw_games,fail,Missing: data/raw/games.csv,Create or restore data/raw/games.csv
+data_files,raw_play_by_play,fail,Missing: data/raw/play_by_play.csv,Create or restore data/raw/play_by_play.csv
+data_files,raw_team_stats,fail,Missing: data/raw/team_stats.csv,Create or restore data/raw/team_stats.csv
+data_files,pregame_features,fail,Missing: data/processed/pregame_features.csv,Create or restore data/processed/pregame_features.csv
+data_files,live_features,fail,Missing: data/processed/live_features.csv,Create or restore data/processed/live_features.csv
+data_files,game_results,fail,Missing: data/processed/game_results.csv,Create or restore data/processed/game_results.csv
+data_files,pregame_predictions,fail,Missing: data/processed/pregame_predictions.csv,Create or restore data/processed/pregame_predictions.csv
+data_files,live_predictions,fail,Missing: data/processed/live_predictions.csv,Create or restore data/processed/live_predictions.csv
+model_artifacts,pregame_model,fail,Missing: models/pregame_model.pkl,Create or restore models/pregame_model.pkl
+model_artifacts,pregame_feature_columns,fail,Missing: models/pregame_feature_columns.pkl,Create or restore models/pregame_feature_columns.pkl
+model_artifacts,live_model,fail,Missing: models/live_model.pkl,Create or restore models/live_model.pkl
+model_artifacts,live_feature_columns,fail,Missing: models/live_feature_columns.pkl,Create or restore models/live_feature_columns.pkl
+reports,pregame_model_metrics,fail,Missing: outputs/reports/pregame_model_metrics.csv,Create or restore outputs/reports/pregame_model_metrics.csv
+reports,live_model_metrics,fail,Missing: outputs/reports/live_model_metrics.csv,Create or restore outputs/reports/live_model_metrics.csv
+reports,evaluation_summary,fail,Missing: outputs/reports/evaluation_summary.csv,Create or restore outputs/reports/evaluation_summary.csv
+reports,data_freshness_summary,pass,Found: outputs/reports/data_freshness_summary.csv,
+reports,pbp_coverage_report,fail,Missing: outputs/reports/play_by_play_coverage_report.csv,Create or restore outputs/reports/play_by_play_coverage_report.csv
+dashboard,app_home,pass,Found: app/Home.py,
+dashboard,dashboard_utils,pass,Found: app/dashboard_utils.py,
+dashboard,page_pregame_predictor,pass,Found: app/pages/1_Pregame_Predictor.py,
+dashboard,page_live_replay,pass,Found: app/pages/2_Live_Replay.py,
+dashboard,page_postgame_override,pass,Found: app/pages/3_Postgame_Override.py,
+dashboard,page_model_performance,pass,Found: app/pages/4_Model_Performance.py,
+dashboard,page_nba_finals_case_study,pass,Found: app/pages/5_NBA_Finals_Case_Study.py,
+dashboard,page_2025_26_nba_finals,pass,Found: app/pages/6_2025_26_NBA_Finals.py,
+season_columns,raw_games,not_applicable,File missing: data/raw/games.csv,
+season_columns,raw_play_by_play,not_applicable,File missing: data/raw/play_by_play.csv,
+season_columns,pregame_features,not_applicable,File missing: data/processed/pregame_features.csv,
+season_columns,live_features,not_applicable,File missing: data/processed/live_features.csv,
+season_columns,game_results,not_applicable,File missing: data/processed/game_results.csv,
 multiseason,multiseason_models_present,pass,Multi-season model artifacts found on disk,
-multiseason,pregame_model_multiseason_metrics_report,pass,Paired metrics report exists: pregame_model_metrics_multiseason.csv,
-multiseason,live_model_multiseason_metrics_report,pass,Paired metrics report exists: live_model_metrics_multiseason.csv,
-multiseason,readiness_report_present,pass,Readiness report: multiseason_training_readiness.csv,
+multiseason,pregame_model_multiseason_metrics_report,warning,Model exists but metrics missing: pregame_model_metrics_multiseason.csv,Re-run multi-season training for this model
+multiseason,live_model_multiseason_metrics_report,warning,Model exists but metrics missing: live_model_metrics_multiseason.csv,Re-run multi-season training for this model
+multiseason,readiness_report_present,not_applicable,No readiness report on disk,
 multiseason,coverage_module_present,pass,multiseason_coverage.py,
 multiseason,runbook_present,pass,MULTISEASON_RUNBOOK.md,
-multiseason,coverage_report_generated,pass,21 rows in coverage report,
-multiseason,coverage_report_status,pass,No fail rows in coverage report,
+multiseason,coverage_report_generated,not_applicable,Coverage report not generated yet,
 comparison,compare_module_present,pass,src/compare_model_versions.py,
-comparison,comparison_reports_generated,pass,16 comparison rows in model_comparison_summary.csv,
+comparison,comparison_reports_generated,not_applicable,Comparison reports not generated yet — run compare_models,
 playoffs,playoff_module_present,pass,src/playoff_case_study.py,
 playoffs,playoff_outputs_generated,pass,"7/7 playoff assets present: playoff_games, playoff_play_by_play, playoff_live_features, playoff_live_predictions, nba_finals_case_study_summary, finals_upcoming_predictions, finals_projected_series_path",
-manual,finals_schedule_overrides,pass,4 override row(s) at data\manual\finals_schedule_overrides.csv,
+manual,finals_schedule_overrides,pass,4 override row(s) at data/manual/finals_schedule_overrides.csv,
 deploy,finals_refresh_workflow,pass,finals_refresh.yml present; no training commands detected,
 pipeline,expected_modes_registered,pass,All 43 expected modes registered,
 pipeline,no_generic_all_mode,pass,No generic all mode (by design),
 pipeline,dry_run_flag,pass,--dry-run supported,
 pipeline,list_modes_flag,pass,--list-modes supported,
 readme,required_commands_documented,pass,All 7 required commands documented,
-context,context_exists,pass,Found: CONTEXT.md,
-context,required_sections_present,pass,All 8 required sections present,
-freshness,freshness_status_counts,pass,"not_required=1, ok=39, stale=1",
-freshness,required_assets_present,warning,Stale assets (likely mtime ordering): pregame_model_metrics,Re-run evaluate/train if outputs are genuinely out of date; otherwise safe to ignore
+context,context_exists,fail,CONTEXT.md missing,Create CONTEXT.md handoff file
+freshness,freshness_status_counts,pass,"missing=16, not_required=9, ok=16",
+freshness,required_assets_present,fail,"Missing required assets: raw_games, raw_play_by_play, raw_team_stats, pregame_features, live_features, game_results, pregame_predictions, live_predictions, pregame_model, live_model, pregame_feature_columns, live_feature_columns, pregame_model_metrics, live_model_metrics, evaluation_summary, pbp_coverage_report",Restore missing files or re-run the pipeline step that creates them
