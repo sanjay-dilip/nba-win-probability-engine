@@ -11,6 +11,8 @@ REPO_DIR = Path("/tmp/nba-win-probability-engine")
 
 FINALS_UPCOMING_REPORT = REPO_DIR / "outputs/reports/finals_upcoming_predictions.csv"
 FINALS_UPCOMING_SNAPSHOT = Path("/tmp/finals_upcoming_predictions_before_refresh.csv")
+PLAYOFF_GAMES_PATH = REPO_DIR / "data/playoffs/raw/playoff_games.csv"
+PLAYOFF_PLAY_BY_PLAY_PATH = REPO_DIR / "data/playoffs/raw/playoff_play_by_play.csv"
 
 
 PREDICTION_TOKENS = (
@@ -197,11 +199,49 @@ def main() -> int:
     else:
         print("No existing Finals upcoming prediction report found before refresh.", flush=True)
 
-    run_with_retries(
+    games_status = run(
+        ["python", "run_pipeline.py", "--mode", "collect_playoff_games", "--seasons", "2025-26"],
+        cwd=REPO_DIR,
+        check=False,
+    )
+
+    if games_status != 0:
+        print("First playoff metadata attempt failed. Retrying...", flush=True)
+        games_status = run(
+            ["python", "run_pipeline.py", "--mode", "collect_playoff_games", "--seasons", "2025-26"],
+            cwd=REPO_DIR,
+            check=False,
+        )
+
+    if not PLAYOFF_GAMES_PATH.exists():
+        print(
+            "Playoff metadata file was not created. "
+            "Skipping play-by-play collection and keeping existing deploy-safe files.",
+            flush=True,
+        )
+
+    play_by_play_status = run(
         ["python", "run_pipeline.py", "--mode", "collect_playoff_play_by_play", "--seasons", "2025-26"],
         cwd=REPO_DIR,
-        attempts=3,
+        check=False,
     )
+
+
+    if play_by_play_status != 0:
+        print("First playoff play-by-play attempt failed. Retrying...", flush=True)
+        play_by_play_status = run(
+            ["python", "run_pipeline.py", "--mode", "collect_playoff_play_by_play", "--seasons", "2025-26"],
+            cwd=REPO_DIR,
+            check=False,
+        )
+
+    if not PLAYOFF_PLAY_BY_PLAY_PATH.exists():
+        print(
+            "Playoff play-by-play file was not created. "
+            "Skipping case-study rebuild and keeping existing deploy-safe files.",
+            flush=True,
+        )
+        return 0
 
     case_study_status = run(
         ["python", "run_pipeline.py", "--mode", "run_playoff_case_study_pipeline", "--seasons", "2025-26"],
