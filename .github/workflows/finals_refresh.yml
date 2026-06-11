@@ -1,130 +1,14 @@
-# Optional scheduled refresh for Finals case-study outputs after deployment.
-#
-# Notes:
-# - Does NOT train models.
-# - NBA API availability and rate limits may affect reliability.
-# - Large raw/playoff files remain gitignored.
-# - This workflow commits only lightweight deploy-safe CSVs and summary reports.
-# - Use workflow_dispatch for manual runs; schedule is conservative.
+# Legacy manual workflow.
+# Scheduled Finals refresh is handled by Google Cloud Run Job + Cloud Scheduler.
 
 name: Finals data refresh
 
 on:
   workflow_dispatch:
-  schedule:
-    # Post-game overnight checks for 8:30 PM ET Finals games.
-    # GitHub cron uses UTC.
-    - cron: "45 4 * * *"
-    - cron: "30 6 * * *"
-
-    # Morning backup check.
-    - cron: "0 14 * * *"
-
-permissions:
-  contents: write
 
 jobs:
-  refresh-finals:
+  legacy-notice:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
-      - name: Install dependencies
-        run: pip install -r requirements.txt
-
-      - name: Collect 2025-26 playoff metadata
-        run: |
-          set +e
-
-          python run_pipeline.py --mode collect_playoff_games --seasons 2025-26
-          STATUS=$?
-
-          if [ $STATUS -ne 0 ]; then
-            echo "First playoff metadata attempt failed. Retrying..."
-            python run_pipeline.py --mode collect_playoff_games --seasons 2025-26
-            STATUS=$?
-          fi
-
-          if [ $STATUS -ne 0 ]; then
-            echo "Second playoff metadata attempt failed. Retrying one final time..."
-            python run_pipeline.py --mode collect_playoff_games --seasons 2025-26
-            STATUS=$?
-          fi
-
-          if [ $STATUS -ne 0 ]; then
-            echo "Playoff metadata collection failed after retries. Continuing with existing deploy-safe files."
-          fi
-
-          exit 0
-
-      - name: Collect 2025-26 playoff play-by-play
-        run: |
-          set +e
-
-          python run_pipeline.py --mode collect_playoff_play_by_play --seasons 2025-26
-          STATUS=$?
-
-          if [ $STATUS -ne 0 ]; then
-            echo "First playoff play-by-play attempt failed. Retrying..."
-            python run_pipeline.py --mode collect_playoff_play_by_play --seasons 2025-26
-            STATUS=$?
-          fi
-
-          if [ $STATUS -ne 0 ]; then
-            echo "Second playoff play-by-play attempt failed. Retrying one final time..."
-            python run_pipeline.py --mode collect_playoff_play_by_play --seasons 2025-26
-            STATUS=$?
-          fi
-
-          if [ $STATUS -ne 0 ]; then
-            echo "Playoff play-by-play collection failed after retries. Continuing with existing deploy-safe files."
-          fi
-
-          exit 0
-
-      - name: Run playoff case-study pipeline
-        run: |
-          set +e
-
-          python run_pipeline.py --mode run_playoff_case_study_pipeline --seasons 2025-26
-          STATUS=$?
-
-          if [ $STATUS -ne 0 ]; then
-            echo "Case-study pipeline could not run. Keeping existing deploy-safe reports."
-          fi
-
-          exit 0
-
-      - name: Commit deploy-safe Finals reports if changed
-        if: always()
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
-          git add \
-            data/deploy/finals_live_predictions.csv \
-            data/deploy/pregame_demo_predictions.csv \
-            data/deploy/live_demo_predictions.csv \
-            outputs/reports/finals_upcoming_predictions.csv \
-            outputs/reports/finals_projected_series_path.csv \
-            outputs/reports/nba_finals_case_study_summary.csv \
-            outputs/reports/playoff_coverage_report.csv \
-            outputs/reports/project_qa_summary.csv \
-            outputs/reports/data_freshness_summary.csv \
-            outputs/reports/model_performance_public_summary.csv \
-            outputs/reports/evaluation_public_summary.csv \
-            data/manual/finals_schedule_overrides.csv || true
-
-          if git diff --staged --quiet; then
-            echo "No deploy-safe Finals report changes to commit."
-          else
-            git commit -m "chore: refresh Finals case-study reports [skip ci]"
-            git push
-          fi
+      - name: Notice
+        run: echo "Scheduled Finals refresh is handled by Google Cloud Run and Cloud Scheduler."
