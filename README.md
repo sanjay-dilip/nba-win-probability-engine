@@ -135,7 +135,7 @@ This project also helped me practice explaining technical work clearly for both 
 - joblib
 - pytest
 - Git / GitHub
-= Google Cloud Run Jobs
+- Google Cloud Run Jobs
 - Google Cloud Scheduler
 - Google Secret Manager
 - Google Artifact Registry

@@ -80,16 +80,37 @@ def main() -> int:
     case_study_status = run(
         ["python", "run_pipeline.py", "--mode", "run_playoff_case_study_pipeline", "--seasons", "2025-26"],
         cwd=REPO_DIR,
-        check=False
+        check=False,
     )
 
     if case_study_status != 0:
         print(
             "Case-study grouped pipeline exited non-zero. "
             "Continuing because deploy-safe Finals outputs may have been generated before QA.",
-            flush=True,
+            flush=True
         )
-        return 0
+
+    # The grouped playoff pipeline writes full playoff predictions under data/playoffs/.
+    # The deployed Streamlit app reads the lightweight export under data/deploy/.
+    # Always export the Finals live replay file after the case-study pipeline.
+    run(
+        ["python", "run_pipeline.py", "--mode", "export_finals_live_predictions_for_deploy"],
+        cwd=REPO_DIR,
+        check=False,
+    )
+
+    # Rebuild deploy-safe Finals reports after export so GitHub and Streamlit receive the latest files.
+    run(
+        ["python", "run_pipeline.py", "--mode", "build_finals_pregame_predictions"],
+        cwd=REPO_DIR,
+        check=False,
+    )
+
+    run(
+        ["python", "run_pipeline.py", "--mode", "build_finals_projected_series_path"],
+        cwd=REPO_DIR,
+        check=False,
+    )
 
     files_to_commit = [
         "data/deploy/finals_live_predictions.csv",
