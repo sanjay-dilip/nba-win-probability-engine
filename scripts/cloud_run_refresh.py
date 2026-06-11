@@ -9,6 +9,129 @@ from pathlib import Path
 
 REPO_DIR = Path("/tmp/nba-win-probability-engine")
 
+FINALS_UPCOMING_REPORT = REPO_DIR / "outputs/reports/finals_upcoming_predictions.csv"
+FINALS_UPCOMING_SNAPSHOT = Path("/tmp/finals_upcoming_predictions_before_refresh.csv")
+
+
+PREDICTION_TOKENS = (
+    "pred",
+    "prob",
+    "model",
+    "confidence",
+    "favorite",
+    "pick",
+)
+
+RESULT_TOKENS = (
+    "actual",
+    "final",
+    "score",
+    "status",
+    "result",
+    "series",
+)
+
+
+def find_game_id_column(df):
+    if "game_id" in df.columns:
+        return "game_id"
+
+    for col in df.columns:
+        if col.lower() == "gameid":
+            return col
+
+    raise ValueError("Could not find a game_id column.")
+
+
+def prediction_columns(df):
+    cols = []
+
+    for col in df.columns:
+        lower = col.lower()
+
+        if lower in {"game_id", "gameid"}:
+            continue
+
+        is_prediction_col = any(token in lower for token in PREDICTION_TOKENS)
+        is_result_col = any(token in lower for token in RESULT_TOKENS)
+
+        if is_prediction_col and not is_result_col:
+            cols.append(col)
+
+    return cols
+
+
+def completed_mask(df):
+    import pandas as pd
+
+    mask = pd.Series(False, index=df.index)
+
+    for col in df.columns:
+        lower = col.lower()
+
+        if lower in {"actual_winner", "winner_actual", "actual_result"}:
+            mask = mask | df[col].notna() & (df[col].astype(str).str.strip() != "")
+
+        if lower in {"game_status", "status"}:
+            mask = mask | df[col].astype(str).str.lower().str.contains("final|completed", na=False)
+
+        if lower in {"actual_home_score", "actual_away_score", "home_score_actual", "away_score_actual"}:
+            mask = mask | df[col].notna()
+
+    return mask
+
+
+def restore_completed_pregame_predictions(snapshot_path: Path, current_path: Path) -> None:
+    import pandas as pd
+
+    if not snapshot_path.exists():
+        print("No prior Finals prediction snapshot found. Skipping prediction lock.", flush=True)
+        return
+
+    if not current_path.exists():
+        print("No current Finals prediction report found. Skipping prediction lock.", flush=True)
+        return
+
+    old_df = pd.read_csv(snapshot_path)
+    current_df = pd.read_csv(current_path)
+
+    old_id = find_game_id_column(old_df)
+    current_id = find_game_id_column(current_df)
+
+    lock_cols = [
+        col for col in prediction_columns(current_df)
+        if col in old_df.columns
+    ]
+
+    if not lock_cols:
+        print("No prediction columns found for locking.", flush=True)
+        return
+
+    old_lookup = old_df.set_index(old_id)
+    done_mask = completed_mask(current_df)
+
+    restored_cells = 0
+
+    for col in lock_cols:
+        for idx, game_id in current_df.loc[done_mask, current_id].items():
+            if game_id not in old_lookup.index:
+                continue
+
+            old_value = old_lookup.at[game_id, col]
+
+            if pd.isna(old_value) or str(old_value).strip() == "":
+                continue
+
+            current_df.at[idx, col] = old_value
+            restored_cells += 1
+
+    current_df.to_csv(current_path, index=False)
+
+    print(
+        f"Locked completed-game pre-game prediction values. Restored {restored_cells} cell(s).",
+        flush=True,
+    )
+
 
 def run(command: list[str], cwd: Path | None = None, check: bool = True) -> int:
     print(f"\n$ {' '.join(command)}", flush=True)
@@ -65,11 +188,14 @@ def main() -> int:
     run(["git", "config", "user.name", "cloud-run-refresh[bot]"], cwd=REPO_DIR)
     run(["git", "config", "user.email", "cloud-run-refresh-bot@example.com"], cwd=REPO_DIR)
 
-    run_with_retries(
-        ["python", "run_pipeline.py", "--mode", "collect_playoff_games", "--seasons", "2025-26"],
-        cwd=REPO_DIR,
-        attempts=3,
-    )
+    if FINALS_UPCOMING_REPORT.exists():
+        shutil.copy2(FINALS_UPCOMING_REPORT, FINALS_UPCOMING_SNAPSHOT)
+        print(
+            f"Saved pre-refresh Finals prediction snapshot: {FINALS_UPCOMING_SNAPSHOT}",
+            flush=True
+        )
+    else:
+        print("No existing Finals upcoming prediction report found before refresh.", flush=True)
 
     run_with_retries(
         ["python", "run_pipeline.py", "--mode", "collect_playoff_play_by_play", "--seasons", "2025-26"],
@@ -104,6 +230,11 @@ def main() -> int:
         ["python", "run_pipeline.py", "--mode", "build_finals_pregame_predictions"],
         cwd=REPO_DIR,
         check=False,
+    )
+
+    restore_completed_pregame_predictions(
+        FINALS_UPCOMING_SNAPSHOT,
+        FINALS_UPCOMING_REPORT
     )
 
     run(
