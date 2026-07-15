@@ -15,7 +15,7 @@ The main goal is to answer two questions:
 1. Before the game starts, which team is more likely to win?
 2. As the game unfolds play by play, how does the win probability change?
 
-The project includes a full data pipeline, leakage-safe feature engineering, regular-season model training, model comparison, playoff case-study analysis, and a focused 2025-26 NBA Finals showcase.
+The project includes a full data pipeline, leakage-safe feature engineering, regular-season model training, model comparison, playoff case-study analysis, and a frozen 2025-26 NBA Finals retrospective.
 
 ## Project Highlights
 
@@ -23,10 +23,10 @@ The project includes a full data pipeline, leakage-safe feature engineering, reg
 * Trained the primary model on 2022-23, 2023-24, and 2024-25 regular-season games.
 * Tested the primary model on the 2025-26 regular season as a future-season holdout.
 * Created both pre-game prediction and live play-by-play win probability workflows.
-* Added a Streamlit dashboard for exploring predictions, live replay, model performance, and NBA Finals projections.
-* Built a 2025-26 NBA Finals case study with pre-game predictions, live replay for completed games, and a projected series path.
+* Added a Streamlit dashboard for exploring predictions, live replay, model performance, and NBA Finals results.
+* Ran a 2025-26 NBA Finals case study live during the series, with pre-game predictions and play-by-play replay, now frozen as a retrospective.
 * Added QA, data freshness checks, tests, and deploy-safe report exports for GitHub and dashboard use.
-* Deployed scheduled cloud automation using Google Cloud Run Jobs and Google Cloud Scheduler to refresh deploy-safe Finals outputs.
+* Operated scheduled cloud automation (Google Cloud Run Jobs + Cloud Scheduler) that refreshed deploy-safe Finals outputs during the series; retired after the Finals ended.
 
 ## Results / Outcomes
 
@@ -45,7 +45,21 @@ The primary model was trained on three regular seasons and evaluated on the next
 * 2.3M+ play-by-play event rows processed for live win probability modeling.
 * 333 playoff games processed for the playoff case study.
 * 154K+ playoff play-by-play rows scored for live playoff replay.
-* 2025-26 NBA Finals report built with Games 1-7 structure, completed-game results, upcoming-game predictions, and conditional Games 6-7 handling.
+* 2025-26 NBA Finals report built with Games 1-7 structure, completed-game results, pre-game predictions, and conditional Games 6-7 handling while the series was live.
+
+### 2025-26 NBA Finals Retrospective
+
+The model ran live through the 2025-26 Finals. The New York Knicks beat the San Antonio Spurs 4-1, with the series ending June 13, 2026. Predictions below were locked before each game and come directly from `outputs/reports/finals_upcoming_predictions.csv`.
+
+| Game | Date       | Matchup   | Pre-game pick     | Confidence | Actual winner     | Correct |
+| ---- | ---------- | --------- | ----------------- | ---------: | ----------------- | ------- |
+| 1    | 2026-06-03 | NYK @ SAS | New York Knicks   |      61.9% | New York Knicks   | Yes     |
+| 2    | 2026-06-05 | NYK @ SAS | San Antonio Spurs |      55.1% | New York Knicks   | No      |
+| 3    | 2026-06-08 | SAS @ NYK | San Antonio Spurs |      52.8% | San Antonio Spurs | Yes     |
+| 4    | 2026-06-10 | SAS @ NYK | San Antonio Spurs |      55.0% | New York Knicks   | No      |
+| 5    | 2026-06-13 | NYK @ SAS | New York Knicks   |      56.1% | New York Knicks   | Yes     |
+
+Pre-game winner picks went 3/5. In-game updating was the stronger story: the live model's final lean matched the eventual winner in all five games, while its opening lean matched in only one, consistent with playoff games being out-of-distribution for a regular-season model. The dashboard's Finals page presents this retrospective with per-game live win-probability replays.
 
 ### Important Note on Metrics
 
@@ -71,7 +85,7 @@ The Streamlit app includes:
 * **Postgame Override** — manual final score override workflow for result tracking.
 * **Model Performance** — primary model metrics, baseline comparison, calibration, and phase-level results.
 * **NBA Finals Case Study** — playoff and Finals case-study view.
-* **2025-26 NBA Finals** — focused Finals showcase with pre-game predictions, live replay, and projected series path.
+* **2025-26 NBA Finals** — frozen retrospective comparing per-game predictions with actual results, plus live replays.
 
 The public repo includes lightweight sample data and deploy-safe Finals reports, so the project can be reviewed without committing large raw NBA datasets.
 
@@ -111,8 +125,8 @@ This project also helped me practice explaining technical work clearly for both 
 * **Model evaluation reports**
   Generates accuracy, ROC-AUC, log loss, Brier score, calibration summaries, phase-level live metrics, and model comparison reports.
 
-* **2025-26 NBA Finals showcase**
-  Includes pre-game predictions for scheduled Finals games, live replay for completed games, and a projected series path that updates when actual results are added.
+* **2025-26 NBA Finals retrospective**
+  Compares the locked pre-game predictions with actual results for the completed series and replays live win probability for each game.
 
 * **Manual post-game result override**
   Allows corrected final scores to be recorded without mixing manual results directly into model features.
@@ -172,15 +186,15 @@ The project follows a repeatable pipeline:
 
 The public dashboard is deployed with Streamlit Community Cloud and reads lightweight deploy-safe CSVs and reports from the GitHub repository.
 
-Scheduled refresh automation is handled through Google Cloud:
+During the 2025-26 Finals, scheduled refresh automation was handled through Google Cloud:
 
-* **Google Cloud Run Jobs** runs the refresh container.
-* **Google Cloud Scheduler** triggers the refresh job at scheduled post-game times.
-* **Google Secret Manager** stores the GitHub token used by the refresh job.
-* **Google Artifact Registry** stores the Docker image for the refresh container.
-* The refresh job collects available 2025-26 playoff data, rebuilds Finals case-study outputs, updates deploy-safe CSVs and reports, and pushes changed files back to GitHub.
+* **Google Cloud Run Jobs** ran the refresh container.
+* **Google Cloud Scheduler** triggered the refresh job at scheduled post-game times.
+* **Google Secret Manager** stored the GitHub token used by the refresh job.
+* **Google Artifact Registry** stored the Docker image for the refresh container.
+* The refresh job collected available 2025-26 playoff data, rebuilt Finals case-study outputs, updated deploy-safe CSVs and reports, and pushed changed files back to GitHub.
 
-This setup keeps the deployed dashboard stable while allowing the Finals replay and reports to refresh when new NBA API data is available. If the upstream NBA API does not return new data immediately, the dashboard continues to use the latest successfully committed deploy-safe outputs.
+The series ended June 13, 2026, so the scheduled refresh has been retired and the committed deploy-safe outputs are final. The refresh script (`scripts/cloud_run_refresh.py`) and Dockerfile remain in the repo as a record of the automation and can be re-pointed at a future season.
 
 ## Data Source
 
@@ -201,7 +215,7 @@ Large raw and processed data files are not committed to GitHub. The repository i
 * deploy-safe Finals live replay export,
 * code to rebuild the full local pipeline.
 
-For upcoming Finals games, the project can use `data/manual/finals_schedule_overrides.csv` for schedule and matchup metadata. This file contains schedule information only, not scores or winners.
+During the Finals, `data/manual/finals_schedule_overrides.csv` supplied schedule and matchup metadata for upcoming games. This file contains schedule information only, not scores or winners.
 
 ## How to Run Locally
 
