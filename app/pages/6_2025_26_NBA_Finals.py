@@ -26,7 +26,6 @@ from dashboard_utils import (  # noqa: E402
     PRIMARY_MODEL_TRAIN_SEASONS,
     add_replay_columns,
     build_finals_win_probability_chart,
-    finals_game_can_show_replay,
     format_finals_matchup,
     format_game_clock,
     format_pct,
@@ -35,6 +34,7 @@ from dashboard_utils import (  # noqa: E402
     load_optional_csv,
     merge_finals_display_row,
     page_intro_subtitle,
+    resolve_playoff_live_predictions_source,
 )
 from src import config  # noqa: E402
 
@@ -77,7 +77,8 @@ def safe_bool(value) -> bool:
 
 summary_df = load_optional_csv(config.NBA_FINALS_CASE_STUDY_SUMMARY_PATH)
 pregame_df = load_optional_csv(config.FINALS_UPCOMING_PREDICTIONS_REPORT_PATH)
-predictions_df = load_optional_csv(config.PLAYOFF_LIVE_PREDICTIONS_PATH)
+live_predictions_path, _is_deploy_export = resolve_playoff_live_predictions_source()
+predictions_df = load_optional_csv(live_predictions_path)
 
 if summary_df is None or summary_df.empty:
     st.warning(
@@ -216,30 +217,34 @@ with dcol2:
     if pd.notna(final_pred) and final_pred:
         st.write(f"Live final lean: {final_pred}")
 
-if finals_game_can_show_replay(selected) and predictions_df is not None and game_id:
+game_preds = pd.DataFrame()
+if predictions_df is not None and game_id:
     game_preds = predictions_df.loc[
         predictions_df["game_id"].astype(str) == game_id
     ].copy()
-    if not game_preds.empty:
-        if "event_num" in game_preds.columns:
-            game_preds = game_preds.sort_values("event_num")
-        home_team = str(game_preds.iloc[0]["home_team"])
-        st.plotly_chart(
-            build_finals_win_probability_chart(game_preds, home_team),
-            use_container_width=True,
-        )
-        with st.expander("Event table"):
-            table = add_replay_columns(game_preds)
-            if "game_clock_display" not in table.columns and "pctimestring" in table.columns:
-                table["game_clock_display"] = table["pctimestring"].map(format_game_clock)
-            if {"home_score", "away_score"}.issubset(table.columns):
-                table["score_display"] = table.apply(
-                    lambda r: format_score(r["home_score"], r["away_score"]), axis=1
-                )
-            show_cols = [c for c in EVENT_TABLE_COLUMNS if c in table.columns]
-            st.dataframe(table[show_cols], use_container_width=True, hide_index=True)
+
+if not game_preds.empty:
+    if "event_num" in game_preds.columns:
+        game_preds = game_preds.sort_values("event_num")
+    home_team = str(game_preds.iloc[0]["home_team"])
+    st.plotly_chart(
+        build_finals_win_probability_chart(game_preds, home_team),
+        use_container_width=True,
+    )
+    with st.expander("Event table"):
+        table = add_replay_columns(game_preds)
+        if "game_clock_display" not in table.columns and "pctimestring" in table.columns:
+            table["game_clock_display"] = table["pctimestring"].map(format_game_clock)
+        if {"home_score", "away_score"}.issubset(table.columns):
+            table["score_display"] = table.apply(
+                lambda r: format_score(r["home_score"], r["away_score"]), axis=1
+            )
+        show_cols = [c for c in EVENT_TABLE_COLUMNS if c in table.columns]
+        st.dataframe(table[show_cols], use_container_width=True, hide_index=True)
 else:
-    st.info("Live replay data is not available for this game.")
+    st.info(
+        "Live replay data for this game is not part of the committed replay export."
+    )
 
 with st.expander("Notes & limitations"):
     st.markdown(
