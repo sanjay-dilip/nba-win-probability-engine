@@ -1,0 +1,7 @@
+# Normalize all text files to LF in the repository and working tree.
+# The index is already uniformly LF; this prevents CRLF churn on Windows.
+* text=auto eol=lf
+
+# Binary artifacts: never apply text conversion.
+*.png binary
+*.pkl binary
