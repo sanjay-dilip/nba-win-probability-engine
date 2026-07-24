@@ -930,6 +930,77 @@ def save_case_study_outputs(
     return {"coverage": coverage_path, "case_study": case_study_path}
 
 
+FINALS_LIVE_EXPORT_COLUMNS = [
+    "season",
+    "game_id",
+    "finals_game_number",
+    "game_date",
+    "home_team",
+    "away_team",
+    "event_num",
+    "period",
+    "pctimestring",
+    "seconds_remaining_period",
+    "seconds_remaining_game",
+    "home_score",
+    "away_score",
+    "score_margin_home",
+    "abs_score_margin",
+    "event_type_label",
+    "home_win_probability",
+    "away_win_probability",
+    "predicted_winner",
+    "predicted_label",
+    "actual_home_team_won",
+    "prediction_correct",
+]
+
+
+def build_finals_live_predictions_export(
+    focus_season: str = CASE_STUDY_FOCUS_SEASON,
+    games_path: Optional[Path] = None,
+    predictions_path: Optional[Path] = None,
+) -> pd.DataFrame:
+    """Filter full playoff live predictions to Finals rows for the deploy-safe export."""
+    games_path = games_path or config.PLAYOFF_GAMES_PATH
+    predictions_path = predictions_path or config.PLAYOFF_LIVE_PREDICTIONS_PATH
+
+    games = _load_csv(games_path)
+    predictions = _load_csv(predictions_path)
+    if games is None or predictions is None:
+        return pd.DataFrame(columns=FINALS_LIVE_EXPORT_COLUMNS)
+
+    labeled = add_finals_game_numbers(games)
+    finals_games = labeled.loc[
+        (labeled["season"] == focus_season) & (labeled["playoff_round"] == "NBA Finals")
+    ][["game_id", "finals_game_number"]]
+    if finals_games.empty:
+        return pd.DataFrame(columns=FINALS_LIVE_EXPORT_COLUMNS)
+
+    merged = predictions.merge(finals_games, on="game_id", how="inner")
+    if merged.empty:
+        return pd.DataFrame(columns=FINALS_LIVE_EXPORT_COLUMNS)
+
+    merged["finals_game_number"] = merged["finals_game_number"].astype(int)
+    return (
+        merged[FINALS_LIVE_EXPORT_COLUMNS]
+        .sort_values(["finals_game_number", "event_num"])
+        .reset_index(drop=True)
+    )
+
+
+def run_export_finals_live_predictions_for_deploy(verbose: bool = True) -> int:
+    """Write the deploy-safe Finals live-replay export."""
+    export_df = build_finals_live_predictions_export()
+    save_csv(export_df, config.FINALS_LIVE_PREDICTIONS_DEPLOY_PATH)
+    if verbose:
+        print(f"Finals live predictions deploy export written to {config.FINALS_LIVE_PREDICTIONS_DEPLOY_PATH}")
+        print(f"  Rows:  {len(export_df)}")
+        games = export_df["game_id"].nunique() if not export_df.empty else 0
+        print(f"  Games: {games}")
+    return 0
+
+
 def collect_playoff_games(seasons: Sequence[str]) -> int:
     """Collect playoff game metadata into the playoff games CSV."""
     rc = collect_games(
