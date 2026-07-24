@@ -18,12 +18,14 @@ if str(ROOT_DIR) not in sys.path:
 from src import config  # noqa: E402
 from src.playoff_case_study import (  # noqa: E402
     CASE_STUDY_COLUMNS,
+    FINALS_LIVE_EXPORT_COLUMNS,
     FINALS_SCHEDULE_OVERRIDE_COLUMNS,
     PROJECTED_SERIES_COLUMNS,
     UPCOMING_PREDICTIONS_COLUMNS,
     add_finals_game_numbers,
     add_playoff_round_labels,
     apply_manual_overrides_to_finals_results,
+    build_finals_live_predictions_export,
     build_finals_pregame_features,
     build_finals_projected_series_report,
     build_finals_upcoming_predictions_report,
@@ -436,6 +438,139 @@ def test_build_nba_finals_case_study_replay_false_without_pbp(tmp_path):
     assert game2["game_status"] == "scheduled"
     assert game2["replay_available"] == False
     assert game2["prediction_available"] == False
+
+
+def test_build_finals_live_predictions_export_filters_to_finals_games(tmp_path):
+    games = pd.DataFrame(
+        [
+            {
+                "game_id": "0042500401",
+                "season": "2025-26",
+                "season_type": "Playoffs",
+                "game_date": "2026-06-03",
+                "home_team": "San Antonio Spurs",
+                "away_team": "New York Knicks",
+                "status": "final",
+            },
+            {
+                "game_id": "0042500402",
+                "season": "2025-26",
+                "season_type": "Playoffs",
+                "game_date": "2026-06-05",
+                "home_team": "San Antonio Spurs",
+                "away_team": "New York Knicks",
+                "status": "final",
+            },
+            {
+                "game_id": "0022500001",
+                "season": "2025-26",
+                "season_type": "Playoffs",
+                "game_date": "2026-04-20",
+                "home_team": "Boston Celtics",
+                "away_team": "Miami Heat",
+                "status": "final",
+            },
+        ]
+    )
+    games_path = tmp_path / "playoff_games.csv"
+    games.to_csv(games_path, index=False)
+
+    predictions = pd.DataFrame(
+        [
+            {
+                "game_id": "0042500401",
+                "event_num": 1,
+                "season": "2025-26",
+                "game_date": "2026-06-03",
+                "home_team": "San Antonio Spurs",
+                "away_team": "New York Knicks",
+                "period": 1,
+                "pctimestring": "12:00",
+                "seconds_remaining_period": 720,
+                "seconds_remaining_game": 2880,
+                "home_score": 0,
+                "away_score": 0,
+                "score_margin_home": 0,
+                "abs_score_margin": 0,
+                "event_type_label": "Jump Ball",
+                "home_win_probability": 0.55,
+                "away_win_probability": 0.45,
+                "predicted_winner": "San Antonio Spurs",
+                "predicted_label": 1,
+                "actual_home_team_won": 1,
+                "prediction_correct": True,
+            },
+            {
+                "game_id": "0042500402",
+                "event_num": 1,
+                "season": "2025-26",
+                "game_date": "2026-06-05",
+                "home_team": "San Antonio Spurs",
+                "away_team": "New York Knicks",
+                "period": 1,
+                "pctimestring": "12:00",
+                "seconds_remaining_period": 720,
+                "seconds_remaining_game": 2880,
+                "home_score": 0,
+                "away_score": 0,
+                "score_margin_home": 0,
+                "abs_score_margin": 0,
+                "event_type_label": "Jump Ball",
+                "home_win_probability": 0.52,
+                "away_win_probability": 0.48,
+                "predicted_winner": "San Antonio Spurs",
+                "predicted_label": 1,
+                "actual_home_team_won": 0,
+                "prediction_correct": False,
+            },
+            {
+                "game_id": "0022500001",
+                "event_num": 1,
+                "season": "2025-26",
+                "game_date": "2026-04-20",
+                "home_team": "Boston Celtics",
+                "away_team": "Miami Heat",
+                "period": 1,
+                "pctimestring": "12:00",
+                "seconds_remaining_period": 720,
+                "seconds_remaining_game": 2880,
+                "home_score": 0,
+                "away_score": 0,
+                "score_margin_home": 0,
+                "abs_score_margin": 0,
+                "event_type_label": "Jump Ball",
+                "home_win_probability": 0.60,
+                "away_win_probability": 0.40,
+                "predicted_winner": "Boston Celtics",
+                "predicted_label": 1,
+                "actual_home_team_won": 1,
+                "prediction_correct": True,
+            },
+        ]
+    )
+    predictions_path = tmp_path / "playoff_live_predictions.csv"
+    predictions.to_csv(predictions_path, index=False)
+
+    export_df = build_finals_live_predictions_export(
+        focus_season="2025-26",
+        games_path=games_path,
+        predictions_path=predictions_path,
+    )
+
+    assert list(export_df.columns) == FINALS_LIVE_EXPORT_COLUMNS
+    assert set(export_df["game_id"]) == {"0042500401", "0042500402"}
+    assert list(export_df.loc[export_df["game_id"] == "0042500401", "finals_game_number"]) == [1]
+    assert list(export_df.loc[export_df["game_id"] == "0042500402", "finals_game_number"]) == [2]
+
+
+def test_build_finals_live_predictions_export_missing_files_returns_empty(tmp_path):
+    export_df = build_finals_live_predictions_export(
+        focus_season="2025-26",
+        games_path=tmp_path / "missing_games.csv",
+        predictions_path=tmp_path / "missing_preds.csv",
+    )
+    assert list(export_df.columns) == FINALS_LIVE_EXPORT_COLUMNS
+    assert export_df.empty
 
 
 def test_playoff_paths_separate_from_regular_season():

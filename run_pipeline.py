@@ -41,6 +41,7 @@ from src.playoff_case_study import (
     run_build_finals_pregame_predictions,
     run_build_finals_projected_series_path,
     run_check_playoff_coverage,
+    run_export_finals_live_predictions_for_deploy,
 )
 from src.season_config import parse_pipeline_season_args
 from src.utils import ensure_directories
@@ -388,6 +389,11 @@ def run_build_finals_projected_series_path_mode() -> int:
     return run_build_finals_projected_series_path()
 
 
+def run_export_finals_live_predictions_for_deploy_mode() -> int:
+    """Filter playoff live predictions to Finals rows and write the deploy-safe export."""
+    return run_export_finals_live_predictions_for_deploy()
+
+
 # ---------------------------------------------------------------------------
 # Grouped mode step definitions (Build 15)
 # ---------------------------------------------------------------------------
@@ -577,6 +583,7 @@ def get_available_modes() -> Dict[str, str]:
         "build_finals_case_study": "Write NBA Finals case-study summary report",
         "build_finals_pregame_predictions": "Build Finals pre-game predictions (primary multiseason model)",
         "build_finals_projected_series_path": "Build projected Finals series path report",
+        "export_finals_live_predictions_for_deploy": "Filter playoff live predictions to Finals rows for the deploy-safe export",
         "run_playoff_case_study_pipeline": "Grouped: coverage + features + predict + finals report + qa (no API collection)",
     }
 
@@ -850,6 +857,7 @@ def dispatch_mode(mode: str, dry_run: bool = False) -> int:
         "build_finals_case_study": run_build_finals_case_study_mode,
         "build_finals_pregame_predictions": run_build_finals_pregame_predictions_mode,
         "build_finals_projected_series_path": run_build_finals_projected_series_path_mode,
+        "export_finals_live_predictions_for_deploy": run_export_finals_live_predictions_for_deploy_mode,
     }
 
     if mode not in individual_handlers:
