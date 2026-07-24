@@ -1126,7 +1126,9 @@ def test_manual_override_wins_over_official_result():
 
 def test_model_projections_only_for_future_games():
     upcoming = _sample_upcoming_for_projection()
-    actual = get_actual_finals_results(upcoming)
+    actual = get_actual_finals_results(
+        upcoming, playoff_results_path=Path("__no_such_results_file__.csv")
+    )
     path = project_finals_series_path(upcoming, actual)
     g5 = path.loc[path["finals_game_number"] == 5].iloc[0]
     assert g5["projection_type"] == "model_projected"
@@ -1145,7 +1147,9 @@ def test_projected_path_marks_later_games_not_needed_after_clinch():
 
 def test_game_six_needed_but_prediction_unavailable():
     upcoming = _sample_upcoming_for_projection()
-    actual = get_actual_finals_results(upcoming)
+    actual = get_actual_finals_results(
+        upcoming, playoff_results_path=Path("__no_such_results_file__.csv")
+    )
     path = project_finals_series_path(upcoming, actual)
     g6 = path.loc[path["finals_game_number"] == 6].iloc[0]
     assert g6["game_needed_under_projection"] == True
@@ -1154,7 +1158,9 @@ def test_game_six_needed_but_prediction_unavailable():
 
 def test_game_seven_not_needed_when_not_three_three():
     upcoming = _sample_upcoming_for_projection()
-    actual = get_actual_finals_results(upcoming)
+    actual = get_actual_finals_results(
+        upcoming, playoff_results_path=Path("__no_such_results_file__.csv")
+    )
     path = project_finals_series_path(upcoming, actual)
     g7 = path.loc[path["finals_game_number"] == 7].iloc[0]
     assert g7["projection_type"] == "if_necessary_pending"
@@ -1431,7 +1437,9 @@ def _sample_upcoming_with_conditional_g6_g7() -> pd.DataFrame:
 
 def test_game_six_used_when_projected_path_after_game_five_is_three_two():
     upcoming = _sample_upcoming_with_conditional_g6_g7()
-    actual = get_actual_finals_results(upcoming)
+    actual = get_actual_finals_results(
+        upcoming, playoff_results_path=Path("__no_such_results_file__.csv")
+    )
     path = project_finals_series_path(upcoming, actual)
     g6 = path.loc[path["finals_game_number"] == 6].iloc[0]
     assert g6["game_needed_under_projection"] == True
@@ -1443,7 +1451,9 @@ def test_game_six_used_when_projected_path_after_game_five_is_three_two():
 
 def test_game_seven_needed_only_if_path_after_game_six_is_three_three():
     upcoming = _sample_upcoming_with_conditional_g6_g7()
-    actual = get_actual_finals_results(upcoming)
+    actual = get_actual_finals_results(
+        upcoming, playoff_results_path=Path("__no_such_results_file__.csv")
+    )
     path = project_finals_series_path(upcoming, actual)
     g7 = path.loc[path["finals_game_number"] == 7].iloc[0]
     assert g7["game_needed_under_projection"] == True
@@ -1453,7 +1463,9 @@ def test_game_seven_needed_only_if_path_after_game_six_is_three_three():
 
 def test_game_seven_not_marked_not_needed_before_game_six_processed():
     upcoming = _sample_upcoming_for_projection()
-    actual = get_actual_finals_results(upcoming)
+    actual = get_actual_finals_results(
+        upcoming, playoff_results_path=Path("__no_such_results_file__.csv")
+    )
     path = project_finals_series_path(upcoming, actual)
     g6 = path.loc[path["finals_game_number"] == 6].iloc[0]
     g7 = path.loc[path["finals_game_number"] == 7].iloc[0]
@@ -1478,7 +1490,9 @@ def test_game_seven_not_needed_when_knicks_clinch_in_game_six():
 
 def test_conditional_model_projected_used_for_g6_g7():
     upcoming = _sample_upcoming_with_conditional_g6_g7()
-    actual = get_actual_finals_results(upcoming)
+    actual = get_actual_finals_results(
+        upcoming, playoff_results_path=Path("__no_such_results_file__.csv")
+    )
     path = project_finals_series_path(upcoming, actual)
     g6 = path.loc[path["finals_game_number"] == 6].iloc[0]
     g7 = path.loc[path["finals_game_number"] == 7].iloc[0]
