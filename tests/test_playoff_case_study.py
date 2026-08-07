@@ -26,6 +26,7 @@ from src.playoff_case_study import (  # noqa: E402
     add_playoff_round_labels,
     apply_manual_overrides_to_finals_results,
     build_finals_live_predictions_export,
+    run_export_finals_live_predictions_for_deploy,
     build_finals_pregame_features,
     build_finals_projected_series_report,
     build_finals_upcoming_predictions_report,
@@ -571,6 +572,87 @@ def test_build_finals_live_predictions_export_missing_files_returns_empty(tmp_pa
     )
     assert list(export_df.columns) == FINALS_LIVE_EXPORT_COLUMNS
     assert export_df.empty
+
+
+def test_run_export_finals_live_predictions_writes_file_and_reports_counts(tmp_path, monkeypatch, capsys):
+    games = pd.DataFrame(
+        [
+            {
+                "game_id": "0042500401",
+                "season": "2025-26",
+                "season_type": "Playoffs",
+                "game_date": "2026-06-03",
+                "home_team": "San Antonio Spurs",
+                "away_team": "New York Knicks",
+                "status": "final",
+            }
+        ]
+    )
+    games_path = tmp_path / "playoff_games.csv"
+    games.to_csv(games_path, index=False)
+
+    predictions = pd.DataFrame(
+        [
+            {
+                "game_id": "0042500401",
+                "event_num": 1,
+                "season": "2025-26",
+                "game_date": "2026-06-03",
+                "home_team": "San Antonio Spurs",
+                "away_team": "New York Knicks",
+                "period": 1,
+                "pctimestring": "12:00",
+                "seconds_remaining_period": 720,
+                "seconds_remaining_game": 2880,
+                "home_score": 0,
+                "away_score": 0,
+                "score_margin_home": 0,
+                "abs_score_margin": 0,
+                "event_type_label": "Jump Ball",
+                "home_win_probability": 0.55,
+                "away_win_probability": 0.45,
+                "predicted_winner": "San Antonio Spurs",
+                "predicted_label": 1,
+                "actual_home_team_won": 1,
+                "prediction_correct": True,
+            }
+        ]
+    )
+    predictions_path = tmp_path / "playoff_live_predictions.csv"
+    predictions.to_csv(predictions_path, index=False)
+
+    deploy_path = tmp_path / "deploy" / "finals_live_predictions.csv"
+    monkeypatch.setattr(config, "PLAYOFF_GAMES_PATH", games_path)
+    monkeypatch.setattr(config, "PLAYOFF_LIVE_PREDICTIONS_PATH", predictions_path)
+    monkeypatch.setattr(config, "FINALS_LIVE_PREDICTIONS_DEPLOY_PATH", deploy_path)
+
+    rc = run_export_finals_live_predictions_for_deploy()
+
+    assert rc == 0
+    assert deploy_path.exists()
+    written = pd.read_csv(deploy_path, dtype={"game_id": str})
+    assert set(written["game_id"]) == {"0042500401"}
+    out = capsys.readouterr().out
+    assert "Rows:  1" in out
+    assert "Games: 1" in out
+
+
+def test_run_export_finals_live_predictions_fails_loud_when_empty(tmp_path, monkeypatch, capsys):
+    deploy_path = tmp_path / "deploy" / "finals_live_predictions.csv"
+    deploy_path.parent.mkdir(parents=True)
+    deploy_path.write_text("season,game_id\n2025-26,0042500401\n")
+
+    monkeypatch.setattr(config, "PLAYOFF_GAMES_PATH", tmp_path / "missing_games.csv")
+    monkeypatch.setattr(config, "PLAYOFF_LIVE_PREDICTIONS_PATH", tmp_path / "missing_preds.csv")
+    monkeypatch.setattr(config, "FINALS_LIVE_PREDICTIONS_DEPLOY_PATH", deploy_path)
+
+    rc = run_export_finals_live_predictions_for_deploy()
+
+    assert rc == 1
+    out = capsys.readouterr().out
+    assert "ERROR" in out
+    # existing deploy file must not be clobbered with an empty export
+    assert deploy_path.read_text() == "season,game_id\n2025-26,0042500401\n"
 
 
 def test_playoff_paths_separate_from_regular_season():
