@@ -992,11 +992,18 @@ def build_finals_live_predictions_export(
 def run_export_finals_live_predictions_for_deploy(verbose: bool = True) -> int:
     """Write the deploy-safe Finals live-replay export."""
     export_df = build_finals_live_predictions_export()
+    if export_df.empty:
+        print(
+            "ERROR: Finals live predictions export is empty — source playoff games "
+            "and/or live predictions are missing or contain no Finals rows. "
+            f"Not overwriting {config.FINALS_LIVE_PREDICTIONS_DEPLOY_PATH}."
+        )
+        return 1
     save_csv(export_df, config.FINALS_LIVE_PREDICTIONS_DEPLOY_PATH)
     if verbose:
         print(f"Finals live predictions deploy export written to {config.FINALS_LIVE_PREDICTIONS_DEPLOY_PATH}")
         print(f"  Rows:  {len(export_df)}")
-        games = export_df["game_id"].nunique() if not export_df.empty else 0
+        games = export_df["game_id"].nunique()
         print(f"  Games: {games}")
     return 0
 
