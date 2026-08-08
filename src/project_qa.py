@@ -812,6 +812,90 @@ def check_github_finals_workflow() -> pd.DataFrame:
     )
 
 
+def check_finals_deploy_export() -> pd.DataFrame:
+    """Verify the deploy-safe Finals live-predictions export is present, non-empty,
+    and covers every Finals game marked replay-available."""
+    deploy_path = config.FINALS_LIVE_PREDICTIONS_DEPLOY_PATH
+    if not deploy_path.exists():
+        return pd.DataFrame(
+            [
+                _row(
+                    "deploy",
+                    "finals_live_predictions_export",
+                    "not_applicable",
+                    "Deploy export not generated yet — run "
+                    "export_finals_live_predictions_for_deploy",
+                )
+            ],
+            columns=SUMMARY_COLUMNS,
+        )
+
+    try:
+        export_df = pd.read_csv(deploy_path, dtype={"game_id": str})
+    except pd.errors.EmptyDataError:
+        export_df = pd.DataFrame()
+
+    if export_df.empty:
+        return pd.DataFrame(
+            [
+                _row(
+                    "deploy",
+                    "finals_live_predictions_export",
+                    "fail",
+                    f"{_relative(deploy_path)} exists but has 0 rows",
+                    "Re-run export_finals_live_predictions_for_deploy",
+                )
+            ],
+            columns=SUMMARY_COLUMNS,
+        )
+
+    # game_id is zero-padded to 10 characters in the deploy export; some sibling
+    # report CSVs are known to drop the leading zeros, so normalize before
+    # comparing rather than treating that formatting drift as missing games.
+    exported_games = {gid.zfill(10) for gid in export_df["game_id"].astype(str).unique()}
+
+    expected_games: set[str] = set()
+    upcoming_path = config.FINALS_UPCOMING_PREDICTIONS_REPORT_PATH
+    if upcoming_path.exists():
+        upcoming = pd.read_csv(upcoming_path, dtype={"game_id": str})
+        if "replay_available" in upcoming.columns:
+            expected_games = {
+                gid.zfill(10)
+                for gid in upcoming.loc[
+                    upcoming["replay_available"] == True, "game_id"  # noqa: E712
+                ].astype(str)
+            }
+
+    missing_games = sorted(expected_games - exported_games)
+    if missing_games:
+        return pd.DataFrame(
+            [
+                _row(
+                    "deploy",
+                    "finals_live_predictions_export",
+                    "warning",
+                    f"{len(exported_games)} game(s) in export; missing replay-available "
+                    f"game(s): {missing_games}",
+                    "Re-run export_finals_live_predictions_for_deploy after collecting "
+                    "the missing games' play-by-play",
+                )
+            ],
+            columns=SUMMARY_COLUMNS,
+        )
+
+    return pd.DataFrame(
+        [
+            _row(
+                "deploy",
+                "finals_live_predictions_export",
+                "pass",
+                f"{len(export_df)} rows across {len(exported_games)} game(s)",
+            )
+        ],
+        columns=SUMMARY_COLUMNS,
+    )
+
+
 def check_context_file(context_path: Optional[Path] = None) -> pd.DataFrame:
     """Verify CONTEXT.md exists and contains required sections."""
     path = context_path or (config.ROOT_DIR / "CONTEXT.md")
@@ -962,6 +1046,7 @@ def build_project_qa_summary(
         check_optional_playoff_case_study(),
         check_finals_schedule_overrides(),
         check_github_finals_workflow(),
+        check_finals_deploy_export(),
         check_pipeline_modes(),
         check_readme_commands(readme_path),
         check_context_file(context_path),
