@@ -1,4 +1,4 @@
-"""Tests for playoff / NBA Finals case-study helpers (Build 20.6).
+"""Tests for playoff / NBA Finals case-study helpers.
 
 No nba_api calls, no model training, no live data collection.
 """

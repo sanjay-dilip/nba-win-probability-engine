@@ -1,6 +1,6 @@
 """Collect raw team-level season statistics and save them to ``data/raw/team_stats.csv``.
 
-This is the data-ingestion layer for Build 4.  It uses ``nba_api``'s
+This is the team-stats data-ingestion layer.  It uses ``nba_api``'s
 ``LeagueDashTeamStats`` endpoint to pull one row of season-level statistics per
 team per season, normalizes the NBA API's uppercase column names into the
 project's snake_case schema, and appends the results to a master team-stats file.

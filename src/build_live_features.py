@@ -1,6 +1,6 @@
 """Build model-ready live win-probability features from raw play-by-play.
 
-This is the live feature-engineering layer for Build 6.  It reads raw
+This is the live feature-engineering layer.  It reads raw
 play-by-play events from ``data/raw/play_by_play.csv`` (joined to schedule
 metadata from ``data/raw/games.csv``) and produces **one row per event** that
 describes the game state *after* that event.  It also derives a game-level

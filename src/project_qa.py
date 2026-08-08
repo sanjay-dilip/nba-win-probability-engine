@@ -422,7 +422,7 @@ def check_optional_comparison_reports() -> pd.DataFrame:
 
 
 def check_optional_playoff_case_study() -> pd.DataFrame:
-    """Optional QA for playoff / NBA Finals case-study support (Build 20.6)."""
+    """Optional QA for playoff / NBA Finals case-study support."""
     rows: List[dict] = []
     module_path = config.ROOT_DIR / "src" / "playoff_case_study.py"
     if module_path.exists():

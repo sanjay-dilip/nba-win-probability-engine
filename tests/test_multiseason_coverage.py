@@ -1,4 +1,4 @@
-"""Tests for multi-season coverage checks (Build 18.5).
+"""Tests for multi-season coverage checks.
 
 Uses temp CSVs only — no nba_api, no training, no live collection.
 """

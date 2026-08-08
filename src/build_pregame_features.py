@@ -1,6 +1,6 @@
 """Build a leakage-safe pre-game feature dataset into ``data/processed/pregame_features.csv``.
 
-This is the feature-engineering layer for Build 5.  It reads the master
+This is the pre-game feature-engineering layer.  It reads the master
 schedule from ``data/raw/games.csv`` and produces **one row per completed
 game**, where every feature is computed using only games that happened
 *strictly before* that game's date.  No information from the game itself (or

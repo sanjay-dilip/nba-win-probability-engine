@@ -703,7 +703,7 @@ def format_public_performance_summary(df: pd.DataFrame) -> pd.DataFrame:
 
 
 # ---------------------------------------------------------------------------
-# 2025-26 NBA Finals showcase helpers (Build 20.8)
+# 2025-26 NBA Finals showcase helpers
 # ---------------------------------------------------------------------------
 
 FINALS_SHOWCASE_SEASON = "2025-26"
@@ -877,7 +877,7 @@ def finals_game_can_show_replay(row: pd.Series) -> bool:
 
 
 # ---------------------------------------------------------------------------
-# Projected Finals series path helpers (Build 20.9.2)
+# Projected Finals series path helpers
 # ---------------------------------------------------------------------------
 
 PROJECTION_TYPE_LABELS = {

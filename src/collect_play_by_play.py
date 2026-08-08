@@ -1,6 +1,6 @@
 """Collect raw play-by-play event data and save it to ``data/raw/play_by_play.csv``.
 
-This is the data-ingestion layer for Build 3.  It reads completed games from
+This is the play-by-play data-ingestion layer.  It reads completed games from
 ``data/raw/games.csv``, fetches play-by-play data for each game from the NBA
 API, and appends the results to a master play-by-play file.
 

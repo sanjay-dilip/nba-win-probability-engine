@@ -181,7 +181,7 @@ MODEL_COMPARISON_DETAIL_PATH = REPORTS_DIR / "model_comparison_detail.csv"
 PHASE_COMPARISON_SUMMARY_PATH = REPORTS_DIR / "live_phase_comparison_summary.csv"
 CALIBRATION_COMPARISON_SUMMARY_PATH = REPORTS_DIR / "calibration_comparison_summary.csv"
 
-# Playoff / NBA Finals case study (Build 20.6). Separate from regular-season paths.
+# Playoff / NBA Finals case study. Separate from regular-season paths.
 PLAYOFF_RAW_DIR = DATA_DIR / "playoffs" / "raw"
 PLAYOFF_PROCESSED_DIR = DATA_DIR / "playoffs" / "processed"
 PLAYOFF_GAMES_PATH = PLAYOFF_RAW_DIR / "playoff_games.csv"

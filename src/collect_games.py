@@ -1,6 +1,6 @@
 """Collect the NBA game schedule and save it to ``data/raw/games.csv``.
 
-This is the data-ingestion layer for Build 2. It uses ``nba_api``'s
+This is the schedule data-ingestion layer. It uses ``nba_api``'s
 ``LeagueGameFinder`` endpoint to pull games for one or more seasons, transforms
 the team-level rows it returns (one row per team per game) into clean
 game-level rows (one row per game), and writes a master schedule file.

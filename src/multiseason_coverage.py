@@ -1,4 +1,4 @@
-"""Multi-season data coverage checks (Build 18.5).
+"""Multi-season data coverage checks.
 
 Inspects local CSV files and summarizes season-level coverage. Does not call
 ``nba_api``, build features, or train models.

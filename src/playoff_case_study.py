@@ -1,4 +1,4 @@
-"""Playoff and NBA Finals case-study pipeline (Build 20.6).
+"""Playoff and NBA Finals case-study pipeline.
 
 Applies the trained primary multi-season model to playoff games as an
 out-of-distribution case study. All outputs are kept separate from the
