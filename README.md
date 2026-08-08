@@ -272,7 +272,11 @@ streamlit run app/Home.py
 
 ### 6. Run tests
 
+Tests need the dev dependencies (pytest, jupyter, ipykernel) on top of the
+runtime install above:
+
 ```bash
+pip install -r requirements-dev.txt
 pytest
 ```
 
@@ -361,7 +365,8 @@ nba-win-probability-engine/
 ├── tests/                       # Unit tests
 ├── .github/workflows/           # Legacy/manual workflow notice
 ├── Dockerfile                   # Cloud Run refresh container
-├── requirements.txt
+├── requirements.txt              # Runtime dependencies (pinned majors)
+├── requirements-dev.txt          # + jupyter, ipykernel, pytest
 ├── run_pipeline.py
 └── README.md
 ```
