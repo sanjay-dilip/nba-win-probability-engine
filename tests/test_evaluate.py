@@ -1,4 +1,4 @@
-"""Tests for the evaluation layer (Build 13).
+"""Tests for the evaluation layer.
 
 Pure-function tests only — no Streamlit, nba_api, or model training.
 """

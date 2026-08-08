@@ -1,4 +1,4 @@
-"""Tests for season configuration helpers (Build 17)."""
+"""Tests for season configuration helpers."""
 
 from __future__ import annotations
 

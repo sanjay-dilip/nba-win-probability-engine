@@ -1,4 +1,4 @@
-"""Tests for Pre-game Predictor dashboard helpers (Build 11).
+"""Tests for Pre-game Predictor dashboard helpers.
 
 Pure-function tests only — Streamlit is never launched.
 """

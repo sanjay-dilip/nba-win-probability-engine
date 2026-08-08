@@ -22,7 +22,6 @@ from dashboard_utils import (  # noqa: E402
     DEMO_PREDICTION_NOTE,
     DEPLOY_LIVE_DEMO_NOTE,
     EVENT_TABLE_COLUMNS,
-    REQUIRED_LIVE_PREDICTION_COLUMNS,
     add_replay_columns,
     build_games_catalog,
     filter_games_catalog,

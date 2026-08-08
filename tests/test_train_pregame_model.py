@@ -1,4 +1,4 @@
-"""Tests for the pre-game model training helpers (Build 7).
+"""Tests for the pre-game model training helpers.
 
 All tests exercise small, pure helpers on hand-built DataFrames and never call
 the NBA API.  The one end-to-end test trains a tiny Logistic Regression on a few

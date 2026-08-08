@@ -1,4 +1,4 @@
-"""Tests for the live model training helpers (Build 8).
+"""Tests for the live model training helpers.
 
 All tests exercise small, pure helpers on hand-built DataFrames and never call
 the NBA API.  The one end-to-end test trains a tiny Logistic Regression on a few

@@ -1,4 +1,4 @@
-"""Project-level QA and stability checks (Build 16).
+"""Project-level QA and stability checks.
 
 Inspects required files, pipeline registration, README/CONTEXT consistency,
 and data freshness status. Does **not** collect data, train models, call
@@ -361,7 +361,7 @@ def check_multiseason_coverage_support() -> pd.DataFrame:
 
 
 def check_optional_comparison_reports() -> pd.DataFrame:
-    """Optional QA for model version comparison reports (Build 19)."""
+    """Optional QA for model version comparison reports."""
     rows: List[dict] = []
     compare_module = config.ROOT_DIR / "src" / "compare_model_versions.py"
     if compare_module.exists():

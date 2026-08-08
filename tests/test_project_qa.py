@@ -1,4 +1,4 @@
-"""Tests for project QA helpers (Build 16).
+"""Tests for project QA helpers.
 
 Pure-function tests only — no Streamlit, nba_api, pipeline steps, or training.
 """

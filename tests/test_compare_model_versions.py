@@ -1,4 +1,4 @@
-"""Tests for model version comparison helpers (Build 19).
+"""Tests for model version comparison helpers.
 
 Pure-function tests only — no nba_api, training, or live report generation.
 """

@@ -6,8 +6,8 @@ training.
 
 ## Purpose
 
-Build 17 added season-aware collection; Build 18 added readiness checks and
-separate multi-season model artifacts. Processed feature files may still contain
+Season-aware collection, readiness checks, and separate multi-season model
+artifacts are already in place. Processed feature files may still contain
 only 2024-25 until older-season play-by-play is collected and features rebuilt.
 
 This runbook is the safe manual sequence. **Nothing here runs automatically.**
@@ -132,7 +132,7 @@ python run_pipeline.py --mode qa
 
 ## What Not To Do
 
-- Do **not** start Build 19 evaluation until multi-season models exist.
+- Do **not** start multi-season model comparison until multi-season models exist.
 - Do **not** overwrite single-season artifacts with multi-season training.
 - Do **not** treat partial seasons as full training data.
 - Do **not** run `train_models_multiseason` when coverage or readiness fails.

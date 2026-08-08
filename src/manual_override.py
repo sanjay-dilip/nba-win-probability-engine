@@ -1,4 +1,4 @@
-"""Manual post-game result override helpers (Build 12).
+"""Manual post-game result override helpers.
 
 Manual results are stored in ``data/manual/postgame_results.csv`` for tracking,
 evaluation, and future safe enrichment. They are **not** merged into model

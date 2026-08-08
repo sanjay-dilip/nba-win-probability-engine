@@ -1,4 +1,4 @@
-"""Generate live win-probability predictions (Build 9).
+"""Generate live win-probability predictions.
 
 Loads the saved live model and feature-column dictionary, scores every row in
 ``data/processed/live_features.csv``, and writes a dashboard-ready CSV to
@@ -74,8 +74,9 @@ def normalize_live_feature_columns(
 ) -> Dict[str, List[str]]:
     """Return feature-column dict from the saved artifact.
 
-    Build 8 saves a dict with ``numeric_features``, ``categorical_features``,
-    and ``all_features``.  A plain list is accepted as ``all_features`` only.
+    ``src/train_live_model.py`` saves a dict with ``numeric_features``,
+    ``categorical_features``, and ``all_features``.  A plain list is accepted
+    as ``all_features`` only.
     """
     if isinstance(artifact, dict):
         if "all_features" not in artifact:

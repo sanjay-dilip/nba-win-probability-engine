@@ -19,7 +19,7 @@ LEAKAGE RULES (the whole point of this module):
 SOURCE OF FINAL SCORES (the target):
     ``games.csv`` is schedule metadata only — it carries NO score columns.  Final
     scores come from ``data/processed/game_results.csv`` (one row per game,
-    derived from play-by-play in Build 6).  When that file is present, its
+    derived from play-by-play by ``src/build_live_features.py``).  When that file is present, its
     ``home_score`` / ``away_score`` are merged onto the schedule by ``game_id``
     so that:
       * Date-based features (``games_played_before``, ``rest_days``) ARE built.
@@ -196,7 +196,7 @@ def load_games_for_features(
 
 
 # ---------------------------------------------------------------------------
-# Game-results enrichment (Build 5 target source)
+# Game-results enrichment
 # ---------------------------------------------------------------------------
 
 # Columns pulled from game_results.csv onto the schedule.  ``home_score`` /

@@ -1,4 +1,4 @@
-"""Generate pre-game win-probability predictions (Build 9).
+"""Generate pre-game win-probability predictions.
 
 Loads the saved pre-game model and feature-column artifact, scores every row in
 ``data/processed/pregame_features.csv``, and writes a dashboard-ready CSV to
@@ -63,7 +63,8 @@ def normalize_pregame_feature_columns(
 ) -> List[str]:
     """Return a flat feature-column list from the saved artifact.
 
-    Build 7 saves a plain ``list``; accept a dict with ``all_features`` too.
+    ``src/train_pregame_model.py`` saves a plain ``list``; accept a dict with
+    ``all_features`` too.
     """
     if isinstance(artifact, dict):
         if "all_features" in artifact:

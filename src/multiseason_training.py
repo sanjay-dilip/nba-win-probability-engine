@@ -1,4 +1,4 @@
-"""Multi-season model training readiness checks (Build 18).
+"""Multi-season model training readiness checks.
 
 Validates that processed feature files contain the requested train/test seasons
 before any multi-season retraining runs. Does not call ``nba_api`` or train models.
