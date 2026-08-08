@@ -343,6 +343,7 @@ def test_playoff_modes_registered(pipeline):
         "build_finals_case_study",
         "build_finals_pregame_predictions",
         "build_finals_projected_series_path",
+        "export_finals_live_predictions_for_deploy",
         "run_playoff_case_study_pipeline",
     ]:
         assert mode in modes
@@ -361,6 +362,14 @@ def test_playoff_case_study_pipeline_step_order(pipeline):
     ]
     assert "collect_playoff_games" not in names
     assert "collect_playoff_play_by_play" not in names
+
+
+def test_export_finals_live_predictions_mode_dispatches(pipeline, capsys):
+    rc = pipeline.dispatch_mode("export_finals_live_predictions_for_deploy", dry_run=True)
+    output = capsys.readouterr().out
+    assert rc == 0
+    assert "export_finals_live_predictions_for_deploy" in output
+    assert "dry-run" in output.lower()
 
 
 def test_playoff_case_study_pipeline_dry_run(pipeline, capsys):

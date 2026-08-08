@@ -259,3 +259,84 @@ def test_github_finals_workflow_exists_and_skips_training():
         assert "train_pregame_model" not in text
         assert "train_live_model" not in text
 
+
+def test_finals_deploy_export_not_applicable_when_missing(tmp_path, monkeypatch):
+    from src import config
+    from src.project_qa import check_finals_deploy_export
+
+    monkeypatch.setattr(config, "FINALS_LIVE_PREDICTIONS_DEPLOY_PATH", tmp_path / "missing.csv")
+
+    df = check_finals_deploy_export()
+    row = df.iloc[0]
+    assert row["check"] == "finals_live_predictions_export"
+    assert row["status"] == "not_applicable"
+
+
+def test_finals_deploy_export_fails_when_empty(tmp_path, monkeypatch):
+    from src import config
+    from src.project_qa import check_finals_deploy_export
+
+    deploy_path = tmp_path / "finals_live_predictions.csv"
+    deploy_path.write_text("season,game_id\n", encoding="utf-8")
+    monkeypatch.setattr(config, "FINALS_LIVE_PREDICTIONS_DEPLOY_PATH", deploy_path)
+
+    df = check_finals_deploy_export()
+    row = df.iloc[0]
+    assert row["status"] == "fail"
+
+
+def test_finals_deploy_export_warns_on_missing_replay_available_game(tmp_path, monkeypatch):
+    from src import config
+    from src.project_qa import check_finals_deploy_export
+
+    deploy_path = tmp_path / "finals_live_predictions.csv"
+    pd.DataFrame(
+        [{"season": "2025-26", "game_id": "0042500401", "event_num": 1}]
+    ).to_csv(deploy_path, index=False)
+
+    upcoming_path = tmp_path / "finals_upcoming_predictions.csv"
+    pd.DataFrame(
+        [
+            {"game_id": "42500401", "replay_available": True},
+            {"game_id": "42500402", "replay_available": True},
+        ]
+    ).to_csv(upcoming_path, index=False)
+
+    monkeypatch.setattr(config, "FINALS_LIVE_PREDICTIONS_DEPLOY_PATH", deploy_path)
+    monkeypatch.setattr(config, "FINALS_UPCOMING_PREDICTIONS_REPORT_PATH", upcoming_path)
+
+    df = check_finals_deploy_export()
+    row = df.iloc[0]
+    assert row["status"] == "warning"
+    assert "0042500402" in row["details"]
+
+
+def test_finals_deploy_export_passes_when_covers_all_replay_available_games(tmp_path, monkeypatch):
+    from src import config
+    from src.project_qa import check_finals_deploy_export
+
+    deploy_path = tmp_path / "finals_live_predictions.csv"
+    pd.DataFrame(
+        [
+            {"season": "2025-26", "game_id": "0042500401", "event_num": 1},
+            {"season": "2025-26", "game_id": "0042500402", "event_num": 1},
+        ]
+    ).to_csv(deploy_path, index=False)
+
+    upcoming_path = tmp_path / "finals_upcoming_predictions.csv"
+    pd.DataFrame(
+        [
+            # deliberately unpadded, matching the known formatting drift in
+            # finals_upcoming_predictions.csv
+            {"game_id": "42500401", "replay_available": True},
+            {"game_id": "42500402", "replay_available": True},
+        ]
+    ).to_csv(upcoming_path, index=False)
+
+    monkeypatch.setattr(config, "FINALS_LIVE_PREDICTIONS_DEPLOY_PATH", deploy_path)
+    monkeypatch.setattr(config, "FINALS_UPCOMING_PREDICTIONS_REPORT_PATH", upcoming_path)
+
+    df = check_finals_deploy_export()
+    row = df.iloc[0]
+    assert row["status"] == "pass"
+
