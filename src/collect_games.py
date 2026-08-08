@@ -43,6 +43,7 @@ from src.data_validation import validate_required_columns  # noqa: E402
 from src.utils import (  # noqa: E402
     append_or_update_csv,
     ensure_directories,
+    get_rate_limit_seconds,
     load_csv,
     log_api_attempt,
     safe_sleep,
@@ -353,15 +354,6 @@ def get_default_seasons() -> List[str]:
     raw = os.getenv("NBA_SEASONS", "")
     seasons = parse_seasons(raw)
     return seasons or list(DEFAULT_SEASONS)
-
-
-def get_rate_limit_seconds() -> float:
-    """Return ``RATE_LIMIT_SECONDS`` from the environment (default 1.5)."""
-    raw = os.getenv("RATE_LIMIT_SECONDS", "1.5")
-    try:
-        return float(raw)
-    except (TypeError, ValueError):
-        return 1.5
 
 
 # ---------------------------------------------------------------------------
