@@ -1,4 +1,4 @@
-"""Data freshness and system status helpers (Build 14).
+"""Data freshness and system status helpers.
 
 Inspects project files to report whether data, models, predictions, reports,
 and dashboard dependencies are present, missing, stale, or empty.
@@ -11,7 +11,7 @@ from __future__ import annotations
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Dict, List, Literal, Optional, Union
+from typing import Dict, List, Literal, Optional, Union
 
 import pandas as pd
 
@@ -347,7 +347,7 @@ def summarize_multiseason_reports() -> pd.DataFrame:
 
 
 def summarize_comparison_reports() -> pd.DataFrame:
-    """Inspect optional model version comparison reports (Build 19)."""
+    """Inspect optional model version comparison reports."""
     comparison_assets = [
         ("model_comparison_summary", config.MODEL_COMPARISON_SUMMARY_PATH),
         ("model_comparison_detail", config.MODEL_COMPARISON_DETAIL_PATH),

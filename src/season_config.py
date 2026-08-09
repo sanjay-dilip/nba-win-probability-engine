@@ -1,4 +1,4 @@
-"""Season configuration and validation helpers (Build 17).
+"""Season configuration and validation helpers.
 
 Centralizes season labels used by the pipeline and collectors. Does not call
 ``nba_api`` or read/write data files.

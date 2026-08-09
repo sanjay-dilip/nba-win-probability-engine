@@ -6,6 +6,8 @@ A machine learning dashboard that predicts NBA game win probability before tip-o
 
 [NBA Win Probability Engine](https://nba-win-probability-engine.streamlit.app/)
 
+The free-tier host puts the app to sleep after a period of inactivity — if you see a "Zzzz" screen, click **Yes, get this app back up!** and wait ~15-20 seconds. Screenshots below show every page if you'd rather not wait.
+
 ## Overview
 
 The NBA Win Probability Engine is an end-to-end sports analytics project that turns NBA game data into pre-game predictions, live win probability replays, model evaluation reports, and a Streamlit dashboard.
@@ -43,7 +45,7 @@ The primary model was trained on three regular seasons and evaluated on the next
 
 * 4,910 NBA regular-season games across 2022-23 through 2025-26.
 * 2.3M+ play-by-play event rows processed for live win probability modeling.
-* 333 playoff games processed for the playoff case study.
+* 335 playoff games processed for the playoff case study.
 * 154K+ playoff play-by-play rows scored for live playoff replay.
 * 2025-26 NBA Finals report built with Games 1-7 structure, completed-game results, pre-game predictions, and conditional Games 6-7 handling while the series was live.
 
@@ -224,7 +226,7 @@ Recommended Python version: **3.10 or 3.11**
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/nba-win-probability-engine.git
+git clone https://github.com/sanjay-dilip/nba-win-probability-engine.git
 cd nba-win-probability-engine
 ```
 
@@ -272,7 +274,11 @@ streamlit run app/Home.py
 
 ### 6. Run tests
 
+Tests need the dev dependencies (pytest, jupyter, ipykernel) on top of the
+runtime install above:
+
 ```bash
+pip install -r requirements-dev.txt
 pytest
 ```
 
@@ -281,6 +287,11 @@ pytest
 ```bash
 python run_pipeline.py --mode qa
 ```
+
+This check expects the full local pipeline (collected data, trained models,
+`CONTEXT.md`) to already exist, so it will report failures on a bare clone —
+that's expected. Steps 1-6 above (dashboard, tests) work from the committed
+sample/deploy-safe data alone and don't need this step.
 
 ## Useful Pipeline Commands
 
@@ -361,7 +372,8 @@ nba-win-probability-engine/
 ├── tests/                       # Unit tests
 ├── .github/workflows/           # Legacy/manual workflow notice
 ├── Dockerfile                   # Cloud Run refresh container
-├── requirements.txt
+├── requirements.txt              # Runtime dependencies (pinned majors)
+├── requirements-dev.txt          # + jupyter, ipykernel, pytest
 ├── run_pipeline.py
 └── README.md
 ```

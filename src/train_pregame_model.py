@@ -1,7 +1,7 @@
-"""Train a baseline pre-game winner-prediction model (Build 7).
+"""Train a baseline pre-game winner-prediction model.
 
 This is the pre-game **model training** layer.  It reads the leakage-safe
-pre-game feature table produced by Build 5
+pre-game feature table produced by ``src/build_pregame_features.py``
 (``data/processed/pregame_features.csv``), trains a baseline Logistic
 Regression classifier inside a scikit-learn ``Pipeline``, evaluates it on a
 chronological hold-out split, and saves the fitted model plus training
@@ -71,7 +71,7 @@ from src.utils import ensure_directories, save_csv  # noqa: E402
 TARGET_COLUMN = "home_team_won"
 
 # Curated leakage-safe numeric feature columns (all computed from strictly
-# earlier games by the Build 5 feature builder).
+# earlier games by src/build_pregame_features.py).
 ALLOWED_NUMERIC_FEATURES = [
     "home_games_played_before",
     "away_games_played_before",

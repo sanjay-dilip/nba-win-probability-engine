@@ -1,4 +1,4 @@
-"""Tests for data freshness helpers (Build 14).
+"""Tests for data freshness helpers.
 
 Pure-function tests only — no Streamlit, nba_api, or pipeline mutations.
 """

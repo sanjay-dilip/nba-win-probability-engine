@@ -1,4 +1,4 @@
-"""Tests for 2025-26 NBA Finals showcase dashboard helpers (Build 20.8)."""
+"""Tests for 2025-26 NBA Finals showcase dashboard helpers."""
 
 from __future__ import annotations
 

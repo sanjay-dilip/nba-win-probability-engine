@@ -156,7 +156,7 @@ def test_compute_winner(home_score, away_score, expected):
 def test_manual_override_output_format(tmp_path):
     """A manual override record must use the expected column layout.
 
-    Uses build_manual_result_record from src.manual_override (Build 12).
+    Uses build_manual_result_record from src.manual_override.
     """
     from src.manual_override import build_manual_result_record  # noqa: E402
 

@@ -1,4 +1,4 @@
-"""Project-level evaluation layer (Build 13).
+"""Project-level evaluation layer.
 
 Reads saved prediction CSVs and existing model training metric reports, then
 writes dashboard-ready evaluation summaries to ``outputs/reports/``.
@@ -11,7 +11,7 @@ from __future__ import annotations
 
 import sys
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, List, Optional, Tuple, Union
 
 import pandas as pd
 

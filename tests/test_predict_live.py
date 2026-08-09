@@ -1,4 +1,4 @@
-"""Tests for live prediction helpers (Build 9).
+"""Tests for live prediction helpers.
 
 Uses tiny DataFrames and a mock estimator — never loads the real trained model.
 """

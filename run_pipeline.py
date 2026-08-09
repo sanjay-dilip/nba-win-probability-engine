@@ -1,7 +1,7 @@
 """Command-line entry point for the NBA Win Probability Engine.
 
 Individual modes run one pipeline step. Grouped modes orchestrate existing
-steps in a safe order (Build 15). Use ``--dry-run`` to preview grouped modes.
+steps in a safe order. Use ``--dry-run`` to preview grouped modes.
 """
 
 from __future__ import annotations
@@ -52,7 +52,7 @@ Step = Tuple[str, Callable[[], int]]
 _single_season: str = "2024-25"
 _multi_seasons: List[str] = ["2022-23", "2023-24", "2024-25"]
 
-# Active train/test split for multi-season training modes (Build 18).
+# Active train/test split for multi-season training modes.
 _train_seasons: Optional[List[str]] = None
 _test_season: Optional[str] = None
 
@@ -395,7 +395,7 @@ def run_export_finals_live_predictions_for_deploy_mode() -> int:
 
 
 # ---------------------------------------------------------------------------
-# Grouped mode step definitions (Build 15)
+# Grouped mode step definitions
 # ---------------------------------------------------------------------------
 
 BUILD_FEATURES_STEPS: List[Step] = [

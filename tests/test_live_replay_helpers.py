@@ -1,4 +1,4 @@
-"""Tests for Live Replay dashboard helpers (Build 10).
+"""Tests for Live Replay dashboard helpers.
 
 Pure-function tests only — Streamlit is never launched.
 """

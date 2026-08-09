@@ -78,33 +78,33 @@ RAW_GAMES_PATH = RAW_DATA_DIR / "games.csv"
 INVALID_GAMES_REPORT_PATH = REPORTS_DIR / "invalid_games_rows.csv"
 SKIPPED_GAMES_REPORT_PATH = REPORTS_DIR / "skipped_games_report.csv"
 
-# Play-by-play raw collection paths (Build 3)
+# Play-by-play raw collection paths
 RAW_PLAY_BY_PLAY_PATH = RAW_DATA_DIR / "play_by_play.csv"
 INVALID_PBP_REPORT_PATH = REPORTS_DIR / "invalid_play_by_play_rows.csv"
 PBP_FAILURES_REPORT_PATH = REPORTS_DIR / "play_by_play_collection_failures.csv"
 # Coverage report written after every play-by-play collection run.
 PBP_COVERAGE_REPORT_PATH = REPORTS_DIR / "play_by_play_coverage_report.csv"
 
-# Team-stats raw collection paths (Build 4). Build 4 stores raw, season-level
-# team statistics under data/raw/ (the data/processed/team_stats.csv path below
-# is reserved for a later, cleaned/feature-ready version).
+# Team-stats raw collection paths. Raw, season-level team statistics are
+# stored under data/raw/ (the data/processed/team_stats.csv path below is
+# reserved for a later, cleaned/feature-ready version).
 RAW_TEAM_STATS_PATH = RAW_DATA_DIR / "team_stats.csv"
 INVALID_TEAM_STATS_REPORT_PATH = REPORTS_DIR / "invalid_team_stats_rows.csv"
 TEAM_STATS_FAILURES_REPORT_PATH = REPORTS_DIR / "team_stats_collection_failures.csv"
 
-# Pre-game feature build report paths (Build 5). The feature output itself uses
+# Pre-game feature build report paths. The feature output itself uses
 # the existing PREGAME_FEATURES_PATH (data/processed/pregame_features.csv) below.
 INVALID_PREGAME_FEATURES_REPORT_PATH = REPORTS_DIR / "invalid_pregame_feature_rows.csv"
 PREGAME_FEATURE_BUILD_ISSUES_PATH = REPORTS_DIR / "pregame_feature_build_issues.csv"
 
-# Live feature build paths (Build 6). The live feature output itself uses the
+# Live feature build paths. The live feature output itself uses the
 # existing LIVE_FEATURES_PATH (data/processed/live_features.csv) below.
 GAME_RESULTS_PATH = PROCESSED_DATA_DIR / "game_results.csv"
 INVALID_LIVE_FEATURES_REPORT_PATH = REPORTS_DIR / "invalid_live_feature_rows.csv"
 LIVE_FEATURE_BUILD_ISSUES_PATH = REPORTS_DIR / "live_feature_build_issues.csv"
 INVALID_GAME_RESULTS_REPORT_PATH = REPORTS_DIR / "invalid_game_results_rows.csv"
 
-# Pre-game model training artifacts (Build 7). The trained scikit-learn pipeline
+# Pre-game model training artifacts. The trained scikit-learn pipeline
 # and the exact feature-column list are saved under models/; evaluation metrics
 # and a calibration summary are written to outputs/reports/.
 PREGAME_MODEL_PATH = MODELS_DIR / "pregame_model.pkl"
@@ -112,7 +112,7 @@ PREGAME_FEATURE_COLUMNS_PATH = MODELS_DIR / "pregame_feature_columns.pkl"
 PREGAME_MODEL_METRICS_PATH = REPORTS_DIR / "pregame_model_metrics.csv"
 PREGAME_MODEL_CALIBRATION_PATH = REPORTS_DIR / "pregame_model_calibration.csv"
 
-# Live model training artifacts (Build 8). Same layout as the pre-game model:
+# Live model training artifacts. Same layout as the pre-game model:
 # the fitted pipeline and feature-column dictionary live under models/; metrics,
 # a calibration summary, and an optional by-phase breakdown go to outputs/reports/.
 LIVE_MODEL_PATH = MODELS_DIR / "live_model.pkl"
@@ -121,7 +121,7 @@ LIVE_MODEL_METRICS_PATH = REPORTS_DIR / "live_model_metrics.csv"
 LIVE_MODEL_CALIBRATION_PATH = REPORTS_DIR / "live_model_calibration.csv"
 LIVE_MODEL_PHASE_METRICS_PATH = REPORTS_DIR / "live_model_metrics_by_phase.csv"
 
-# Multi-season model training artifacts (Build 18). Separate from single-season
+# Multi-season model training artifacts. Separate from single-season
 # baseline artifacts so accidental retraining does not overwrite dashboard models.
 PREGAME_MODEL_MULTISEASON_PATH = MODELS_DIR / "pregame_model_multiseason.pkl"
 PREGAME_FEATURE_COLUMNS_MULTISEASON_PATH = (
@@ -153,13 +153,13 @@ MULTISEASON_COVERAGE_REPORT_PATH = (
     REPORTS_DIR / "multiseason_coverage_report.csv"
 )
 
-# Season defaults (Build 17). See src/season_config.py for validation helpers.
+# Season defaults. See src/season_config.py for validation helpers.
 DEFAULT_SEASON = "2024-25"
 MULTI_SEASON_TRAIN_START = "2022-23"
 SUPPORTED_SEASONS = ["2022-23", "2023-24", "2024-25"]
 FUTURE_TEST_SEASON = "2025-26"
 
-# Evaluation layer outputs (Build 13). Summaries are written by src/evaluate.py
+# Evaluation layer outputs. Summaries are written by src/evaluate.py
 # from saved predictions and existing training metric reports — no retraining.
 EVALUATION_SUMMARY_PATH = REPORTS_DIR / "evaluation_summary.csv"
 EVALUATION_PUBLIC_SUMMARY_PATH = REPORTS_DIR / "evaluation_public_summary.csv"
@@ -168,20 +168,20 @@ LIVE_PREDICTION_SUMMARY_PATH = REPORTS_DIR / "live_prediction_summary.csv"
 BIGGEST_MOMENTUM_SWINGS_PATH = REPORTS_DIR / "biggest_momentum_swings.csv"
 EVALUATION_BY_TEAM_PATH = REPORTS_DIR / "evaluation_by_team.csv"
 
-# Data freshness / system status (Build 14). Written by src/data_freshness.py.
+# Data freshness / system status. Written by src/data_freshness.py.
 DATA_FRESHNESS_REPORT_PATH = REPORTS_DIR / "data_freshness_summary.csv"
 
-# Project QA (Build 16). Written by src/project_qa.py.
+# Project QA. Written by src/project_qa.py.
 PROJECT_QA_REPORT_PATH = REPORTS_DIR / "project_qa_summary.csv"
 
-# Model version comparison (Build 19). Written by src/compare_model_versions.py.
+# Model version comparison. Written by src/compare_model_versions.py.
 MODEL_COMPARISON_SUMMARY_PATH = REPORTS_DIR / "model_comparison_summary.csv"
 MODEL_PERFORMANCE_PUBLIC_SUMMARY_PATH = REPORTS_DIR / "model_performance_public_summary.csv"
 MODEL_COMPARISON_DETAIL_PATH = REPORTS_DIR / "model_comparison_detail.csv"
 PHASE_COMPARISON_SUMMARY_PATH = REPORTS_DIR / "live_phase_comparison_summary.csv"
 CALIBRATION_COMPARISON_SUMMARY_PATH = REPORTS_DIR / "calibration_comparison_summary.csv"
 
-# Playoff / NBA Finals case study (Build 20.6). Separate from regular-season paths.
+# Playoff / NBA Finals case study. Separate from regular-season paths.
 PLAYOFF_RAW_DIR = DATA_DIR / "playoffs" / "raw"
 PLAYOFF_PROCESSED_DIR = DATA_DIR / "playoffs" / "processed"
 PLAYOFF_GAMES_PATH = PLAYOFF_RAW_DIR / "playoff_games.csv"
@@ -200,14 +200,14 @@ FINALS_PROJECTED_SERIES_PATH = REPORTS_DIR / "finals_projected_series_path.csv"
 FINALS_AUTO_REFRESH_LOG_PATH = REPORTS_DIR / "finals_auto_refresh_log.csv"
 
 # ---------------------------------------------------------------------------
-# Full data file paths (populated in later builds; not created yet)
+# Full data file paths
 # ---------------------------------------------------------------------------
 GAMES_PATH = PROCESSED_DATA_DIR / "games.csv"
 PLAY_BY_PLAY_PATH = PROCESSED_DATA_DIR / "play_by_play.csv"
 TEAM_STATS_PATH = PROCESSED_DATA_DIR / "team_stats.csv"
 PREGAME_FEATURES_PATH = PROCESSED_DATA_DIR / "pregame_features.csv"
 LIVE_FEATURES_PATH = PROCESSED_DATA_DIR / "live_features.csv"
-# Prediction outputs (Build 9) — dashboard-ready CSVs alongside feature files.
+# Prediction outputs — dashboard-ready CSVs alongside feature files.
 PREGAME_PREDICTIONS_PATH = PROCESSED_DATA_DIR / "pregame_predictions.csv"
 LIVE_PREDICTIONS_PATH = PROCESSED_DATA_DIR / "live_predictions.csv"
 POSTGAME_RESULTS_PATH = MANUAL_DATA_DIR / "postgame_results.csv"

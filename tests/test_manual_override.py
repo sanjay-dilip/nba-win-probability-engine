@@ -1,4 +1,4 @@
-"""Tests for manual post-game override helpers (Build 12).
+"""Tests for manual post-game override helpers.
 
 Pure-function tests only — Streamlit is never launched.
 """

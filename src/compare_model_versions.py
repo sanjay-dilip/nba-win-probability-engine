@@ -1,4 +1,4 @@
-"""Multi-season model version comparison (Build 19).
+"""Multi-season model version comparison.
 
 Reads existing single-season baseline and multi-season holdout metric reports,
 then writes comparison CSVs. Does **not** train models, collect data, or call
@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import sys
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Dict, List, Optional, Tuple, Union
 
 import pandas as pd
 

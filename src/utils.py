@@ -7,6 +7,7 @@ modeling) lives elsewhere in later builds.
 
 from __future__ import annotations
 
+import os
 import time
 from datetime import datetime, timezone
 from pathlib import Path
@@ -183,6 +184,15 @@ def compute_winner(home_score: int, away_score: int) -> str:
     if home_score == away_score:
         return "tie"
     return "home" if home_score > away_score else "away"
+
+
+def get_rate_limit_seconds() -> float:
+    """Return ``RATE_LIMIT_SECONDS`` from the environment (default 1.5)."""
+    raw = os.getenv("RATE_LIMIT_SECONDS", "1.5")
+    try:
+        return float(raw)
+    except (TypeError, ValueError):
+        return 1.5
 
 
 def safe_sleep(seconds: float) -> None:

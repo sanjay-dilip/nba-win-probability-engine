@@ -1,6 +1,6 @@
 """Collect raw play-by-play event data and save it to ``data/raw/play_by_play.csv``.
 
-This is the data-ingestion layer for Build 3.  It reads completed games from
+This is the play-by-play data-ingestion layer.  It reads completed games from
 ``data/raw/games.csv``, fetches play-by-play data for each game from the NBA
 API, and appends the results to a master play-by-play file.
 
@@ -31,7 +31,6 @@ Run directly:
 from __future__ import annotations
 
 import argparse
-import os
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -50,6 +49,7 @@ from src.data_validation import validate_required_columns  # noqa: E402
 from src.utils import (  # noqa: E402
     append_or_update_csv,
     ensure_directories,
+    get_rate_limit_seconds,
     log_api_attempt,
     safe_sleep,
     save_csv,
@@ -539,7 +539,7 @@ def collect_play_by_play(
     if batch_size is None or batch_size <= 0:
         batch_size = DEFAULT_BATCH_SIZE
 
-    rate_limit = _get_rate_limit_seconds()
+    rate_limit = get_rate_limit_seconds()
     unlimited = not limit or limit <= 0
 
     # --- load eligible games + current coverage -----------------------------
@@ -689,15 +689,6 @@ def collect_play_by_play(
     else:
         print("  Failure report:              none (all selected games succeeded)")
     return 0
-
-
-def _get_rate_limit_seconds() -> float:
-    """Return RATE_LIMIT_SECONDS from the environment (default 1.5)."""
-    raw = os.getenv("RATE_LIMIT_SECONDS", "1.5")
-    try:
-        return float(raw)
-    except (TypeError, ValueError):
-        return 1.5
 
 
 def main(argv: Optional[Sequence[str]] = None) -> int:

@@ -1,4 +1,4 @@
-"""Pure helper functions for Streamlit dashboard pages (Build 10+).
+"""Pure helper functions for Streamlit dashboard pages.
 
 These helpers contain no Streamlit imports so they can be unit-tested without
 running the app.  Dashboard pages import from here to keep UI code readable.
@@ -10,7 +10,6 @@ import re
 from pathlib import Path
 from typing import List, Optional, Sequence, Tuple, Union
 
-import numpy as np
 import pandas as pd
 
 # Columns the Live Replay page requires in live_predictions.csv.
@@ -177,7 +176,7 @@ def lookup_game_result(
 
 
 # ---------------------------------------------------------------------------
-# Pre-game Predictor helpers (Build 11)
+# Pre-game Predictor helpers
 # ---------------------------------------------------------------------------
 
 REQUIRED_PREGAME_PREDICTION_COLUMNS = [
@@ -330,7 +329,7 @@ def lookup_pregame_features(
 
 
 # ---------------------------------------------------------------------------
-# Data freshness helpers (Build 14)
+# Data freshness helpers
 # ---------------------------------------------------------------------------
 
 FRESHNESS_CHECK_CMD = "python run_pipeline.py --mode check_data_freshness"
@@ -703,7 +702,7 @@ def format_public_performance_summary(df: pd.DataFrame) -> pd.DataFrame:
 
 
 # ---------------------------------------------------------------------------
-# 2025-26 NBA Finals showcase helpers (Build 20.8)
+# 2025-26 NBA Finals showcase helpers
 # ---------------------------------------------------------------------------
 
 FINALS_SHOWCASE_SEASON = "2025-26"
@@ -877,7 +876,7 @@ def finals_game_can_show_replay(row: pd.Series) -> bool:
 
 
 # ---------------------------------------------------------------------------
-# Projected Finals series path helpers (Build 20.9.2)
+# Projected Finals series path helpers
 # ---------------------------------------------------------------------------
 
 PROJECTION_TYPE_LABELS = {

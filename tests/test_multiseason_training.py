@@ -1,4 +1,4 @@
-"""Tests for multi-season training readiness (Build 18).
+"""Tests for multi-season training readiness.
 
 Pure-function tests with fake data — no nba_api, no heavy model training.
 """

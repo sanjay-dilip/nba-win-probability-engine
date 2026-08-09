@@ -1,4 +1,4 @@
-"""Tests for pre-game prediction helpers (Build 9).
+"""Tests for pre-game prediction helpers.
 
 Uses tiny DataFrames and a mock estimator — never loads the real trained model.
 """

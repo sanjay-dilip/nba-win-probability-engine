@@ -1,4 +1,4 @@
-"""Project-level QA and stability checks (Build 16).
+"""Project-level QA and stability checks.
 
 Inspects required files, pipeline registration, README/CONTEXT consistency,
 and data freshness status. Does **not** collect data, train models, call
@@ -361,7 +361,7 @@ def check_multiseason_coverage_support() -> pd.DataFrame:
 
 
 def check_optional_comparison_reports() -> pd.DataFrame:
-    """Optional QA for model version comparison reports (Build 19)."""
+    """Optional QA for model version comparison reports."""
     rows: List[dict] = []
     compare_module = config.ROOT_DIR / "src" / "compare_model_versions.py"
     if compare_module.exists():
@@ -422,7 +422,7 @@ def check_optional_comparison_reports() -> pd.DataFrame:
 
 
 def check_optional_playoff_case_study() -> pd.DataFrame:
-    """Optional QA for playoff / NBA Finals case-study support (Build 20.6)."""
+    """Optional QA for playoff / NBA Finals case-study support."""
     rows: List[dict] = []
     module_path = config.ROOT_DIR / "src" / "playoff_case_study.py"
     if module_path.exists():

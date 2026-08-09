@@ -1,4 +1,4 @@
-"""Tests for run_pipeline grouped modes (Build 15).
+"""Tests for run_pipeline grouped modes.
 
 Orchestration tests only — no real pipeline steps, nba_api, or model training.
 """

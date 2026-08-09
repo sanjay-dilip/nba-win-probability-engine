@@ -1,7 +1,7 @@
-"""Train a baseline live win-probability model (Build 8).
+"""Train a baseline live win-probability model.
 
 This is the live **model training** layer.  It reads the per-event live-feature
-table produced by Build 6 (``data/processed/live_features.csv``), trains a
+table produced by ``src/build_live_features.py`` (``data/processed/live_features.csv``), trains a
 baseline Logistic Regression classifier inside a scikit-learn ``Pipeline``,
 evaluates it on a **game-level chronological** hold-out split, and saves the
 fitted model plus training artifacts.

@@ -1,4 +1,4 @@
-"""Playoff and NBA Finals case-study pipeline (Build 20.6).
+"""Playoff and NBA Finals case-study pipeline.
 
 Applies the trained primary multi-season model to playoff games as an
 out-of-distribution case study. All outputs are kept separate from the
@@ -34,7 +34,6 @@ from src.predict_live import predict_live  # noqa: E402
 from src.predict_pregame import (  # noqa: E402
     build_pregame_prediction_output,
     generate_pregame_predictions,
-    load_pregame_prediction_inputs,
     normalize_pregame_feature_columns,
     validate_pregame_prediction_inputs,
 )
@@ -179,8 +178,6 @@ def normalize_season_type(value: object) -> str:
         return "Regular Season"
     text = str(value).strip().lower()
     if text in {"playoffs", "playoff", "postseason", "post season"}:
-        return PLAYOFF_SEASON_TYPE
-    if text == "playoffs":
         return PLAYOFF_SEASON_TYPE
     if "playoff" in text:
         return PLAYOFF_SEASON_TYPE

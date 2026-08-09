@@ -80,6 +80,10 @@ st.markdown(
         "tracking and evaluation only."
     )
 )
+st.caption(
+    "Portfolio demo page — entries here run against the live app instance and "
+    "are not saved back to the project's data; they reset on the next deploy."
+)
 with st.expander("Data status", expanded=False):
     st.caption(
         format_status_panel_text(

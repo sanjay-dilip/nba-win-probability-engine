@@ -1,0 +1,5 @@
+-r requirements.txt
+
+jupyter>=1.1,<2
+ipykernel>=7.2,<8
+pytest>=9.0,<10
